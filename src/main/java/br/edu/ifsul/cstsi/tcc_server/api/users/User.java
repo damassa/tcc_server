@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "User")
 @Table(name = "users")
@@ -24,8 +25,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Serie> insertedSeries; //1 usuário cadastra várias séries
 
-    //@ManyToMany
-    private List<Episode> episodes; //1 ou mais usuários assistem 1 ou mais episódios
-
-    private List<Rating> rating; //1 ou mais usuários avaliam 1 ou mais séries
+    @OneToMany(mappedBy = "user")
+    Set<Rating> ratings;
 }

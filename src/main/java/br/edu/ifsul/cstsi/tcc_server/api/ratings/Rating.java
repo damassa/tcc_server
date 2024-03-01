@@ -8,15 +8,17 @@ import java.util.List;
 
 @Entity
 public class Rating {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EmbeddedId
+    RatingKey id;
 
-    private Long id;
+    @ManyToMany
+    @MapsId("serieID")
+    @JoinColumn(name = "serie_id", referencedColumnName = "id")
+    List<Serie> series;
+
+    @ManyToMany
+    @MapsId("userID")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    List<User> users;
     private String comment;
-
-    @ManyToMany
-    private List<User> users; //1 ou mais usuários avaliam uma ou mais séries (TÔ EM DÚVIDA AQUI)
-
-    @ManyToMany
-    private List<Serie> series; //1 ou mais séries são avaliadas por 1 ou mais usuários (TÔ EM DÚVIDA AQUI)
 }

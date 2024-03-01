@@ -2,10 +2,12 @@ package br.edu.ifsul.cstsi.tcc_server.api.series;
 
 import br.edu.ifsul.cstsi.tcc_server.api.categories.Category;
 import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
+import br.edu.ifsul.cstsi.tcc_server.api.ratings.Rating;
 import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "Serie")
 @Table(name = "series")
@@ -36,4 +38,7 @@ public class Serie {
 
     @OneToMany(mappedBy = "serie")
     private List<Episode> episodes; //1 série possui vários episódios
+
+    @OneToMany(mappedBy = "serie")
+    Set<Rating> ratings;
 }

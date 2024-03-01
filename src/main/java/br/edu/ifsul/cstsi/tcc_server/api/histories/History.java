@@ -1,23 +1,27 @@
 package br.edu.ifsul.cstsi.tcc_server.api.histories;
 
 import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
+import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
 import br.edu.ifsul.cstsi.tcc_server.api.users.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.sql.Time;
 import java.util.List;
 
 @Entity
 public class History { //Intuito da tabela é pegar o tempo do episódio assistido por um usuário
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EmbeddedId
+    HistoryKey id;
+
+    @ManyToMany
+    @MapsId("serieID")
+    @JoinColumn(name = "serie_id", referencedColumnName = "id")
+    List<Serie> series;
+
+    @ManyToMany
+    @MapsId("userID")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    List<User> users;
 
     private Time pausedAt;
-
-    private List<User> users; //1 ou mais usuários assistem 1 ou mais séries (AQUI EU TÔ EM DÚVIDA)
-
-    private List<Episode> episodes; //1 ou mais episódios são assistidos por 1 ou mais usuários
 }
