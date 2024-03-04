@@ -1,7 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.histories;
 
 import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
-import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
 import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import jakarta.persistence.*;
 
@@ -14,13 +13,13 @@ public class History { //Intuito da tabela é pegar o tempo do episódio assisti
     HistoryKey id;
 
     @ManyToMany
-    @MapsId("serieID")
-    @JoinColumn(name = "serie_id", referencedColumnName = "id")
-    List<Serie> series;
+    @MapsId("episodeID")
+    @JoinColumn(name = "episode_id")
+    List<Episode> episodes;
 
     @ManyToMany
     @MapsId("userID")
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id")
     List<User> users;
 
     private Time pausedAt;

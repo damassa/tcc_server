@@ -1,6 +1,7 @@
 package br.edu.ifsul.cstsi.tcc_server.api.users;
 
 import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
+import br.edu.ifsul.cstsi.tcc_server.api.histories.History;
 import br.edu.ifsul.cstsi.tcc_server.api.ratings.Rating;
 import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
 import jakarta.persistence.*;
@@ -25,6 +26,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Serie> insertedSeries; //1 usuário cadastra várias séries
 
-    @OneToMany(mappedBy = "user")
+    @ManyToMany(mappedBy = "user")
     Set<Rating> ratings;
+
+    @ManyToMany(mappedBy = "user")
+    Set<History> histories;
 }

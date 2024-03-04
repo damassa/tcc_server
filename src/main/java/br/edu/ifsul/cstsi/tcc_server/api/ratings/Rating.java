@@ -13,12 +13,13 @@ public class Rating {
 
     @ManyToMany
     @MapsId("serieID")
-    @JoinColumn(name = "serie_id", referencedColumnName = "id")
+    @JoinColumn(name = "serie_id")
     List<Serie> series;
 
     @ManyToMany
     @MapsId("userID")
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id")
     List<User> users;
     private String comment;
+    private int stars;
 }
