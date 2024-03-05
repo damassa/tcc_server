@@ -6,20 +6,21 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "rating")
+@Table(name = "ratings")
 public class Rating {
     @EmbeddedId
     RatingKey id;
 
-    @ManyToMany
+    @ManyToOne
     @MapsId("serieID")
     @JoinColumn(name = "serie_id")
-    List<Serie> series;
+    Serie serie;
 
-    @ManyToMany
+    @ManyToOne
     @MapsId("userID")
     @JoinColumn(name = "user_id")
-    List<User> users;
+    User user;
     private String comment;
     private int stars;
 }

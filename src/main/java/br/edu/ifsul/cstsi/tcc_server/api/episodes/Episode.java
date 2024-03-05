@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.episodes;
 
+import br.edu.ifsul.cstsi.tcc_server.api.histories.History;
 import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
 import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import jakarta.persistence.*;
@@ -18,4 +19,7 @@ public class Episode {
     @ManyToOne
     @JoinColumn(name = "series_id", referencedColumnName = "id")
     private Serie serie; //Vários episódios são de apenas 1 série
+
+    @OneToMany(mappedBy = "episode")
+    private List<History> histories;
 }

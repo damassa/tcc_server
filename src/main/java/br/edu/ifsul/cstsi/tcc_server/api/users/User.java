@@ -26,9 +26,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Serie> insertedSeries; //1 usuário cadastra várias séries
 
-    @ManyToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     Set<Rating> ratings;
 
-    @ManyToMany(mappedBy = "user")
-    Set<History> histories;
+    @OneToMany(mappedBy = "user")
+    private List<History> histories;
 }

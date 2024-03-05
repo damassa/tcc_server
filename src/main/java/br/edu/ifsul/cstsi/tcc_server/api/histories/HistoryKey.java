@@ -6,8 +6,8 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 @Embeddable
 public class HistoryKey implements Serializable {
-    @Column(name = "serie_id")
-    Long serieID;
+    @Column(name = "episode_id")
+    Long episodeID;
 
     @Column(name = "user_id")
     Long userID;

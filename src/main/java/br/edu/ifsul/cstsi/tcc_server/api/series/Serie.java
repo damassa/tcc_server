@@ -40,5 +40,5 @@ public class Serie {
     private List<Episode> episodes; //1 série possui vários episódios
 
     @OneToMany(mappedBy = "serie")
-    Set<Rating> ratings;
+    List<Rating> ratings;
 }
