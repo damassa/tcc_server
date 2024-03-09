@@ -7,8 +7,6 @@ import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.Set;
-
 @Entity(name = "Serie")
 @Table(name = "series")
 public class Serie {

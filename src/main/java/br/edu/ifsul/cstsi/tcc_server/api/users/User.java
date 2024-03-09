@@ -1,6 +1,5 @@
 package br.edu.ifsul.cstsi.tcc_server.api.users;
 
-import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
 import br.edu.ifsul.cstsi.tcc_server.api.histories.History;
 import br.edu.ifsul.cstsi.tcc_server.api.ratings.Rating;
 import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
@@ -8,10 +7,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity(name = "User")
 @Table(name = "users")
+@Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +26,14 @@ public class User {
     private List<Serie> insertedSeries; //1 usuário cadastra várias séries
 
     @OneToMany(mappedBy = "user")
-    Set<Rating> ratings;
+    List<Rating> ratings;
 
     @OneToMany(mappedBy = "user")
     private List<History> histories;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private List<Role> roles;
 }
