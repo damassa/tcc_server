@@ -5,21 +5,33 @@ import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
 import br.edu.ifsul.cstsi.tcc_server.api.ratings.Rating;
 import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.antlr.v4.runtime.misc.NotNull;
+import org.modelmapper.ModelMapper;
 
 import java.util.List;
 @Entity(name = "Serie")
 @Table(name = "series")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Serie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @NotNull
     private String plot;
+    @NotNull
     private int year;
+    @NotNull
     private String image;
     private String bigImage;
     private String opening_video;
     private int duration;
+    @NotNull
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "favorites",
@@ -39,4 +51,9 @@ public class Serie {
 
     @OneToMany(mappedBy = "serie")
     List<Rating> ratings;
+
+    public static Serie create(SerieDTO s) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(s, Serie.class);
+    }
 }
