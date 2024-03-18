@@ -46,13 +46,13 @@ public class Serie {
     @JoinColumn(name = "categories_id", referencedColumnName = "id")
     private Category category; //Nenhuma ou várias séries possuem apenas 1 categoria
 
-    @OneToMany(mappedBy = "serie")
+    @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER)
     private List<Episode> episodes; //1 série possui vários episódios
 
-    @OneToMany(mappedBy = "serie")
+    @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER)
     List<Rating> ratings;
 
-    public static Serie create(SerieDTO s) {
+    public static Serie create(Serie s) {
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(s, Serie.class);
     }

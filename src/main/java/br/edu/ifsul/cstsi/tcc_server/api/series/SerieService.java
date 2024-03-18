@@ -13,26 +13,25 @@ public class SerieService {
     @Autowired
     private SerieRepository rep;
 
-    public List<SerieDTO> getSeries() {
-        return rep.findAll().stream().map(SerieDTO::create).collect(Collectors.toList());
+    public List<Serie> getSeries() {
+        return rep.findAll();
     }
 
-    public SerieDTO getSerieById(Long id) {
-        Optional<Serie> serie = rep.findById(id);
-        return serie.map(SerieDTO::create).orElse(null);
+    public Optional<Serie> getSerieById(Long id) {
+        return  rep.findById(id);
     }
 
-    public List<SerieDTO> getSeriesByName(String name) {
-        return rep.findByName(name+"%").stream().map(SerieDTO::create).collect(Collectors.toList());
+    public List<Serie> getSeriesByName(String name) {
+        return rep.findByName(name+"%");
     }
 
-    public SerieDTO insert(Serie serie) {
+    public Serie insert(Serie serie) {
         Assert.isNull(serie.getId(),"Não foi possível inserir o registro");
 
-        return SerieDTO.create(rep.save(serie));
+        return rep.save(serie);
     }
 
-    public SerieDTO update(Serie serie, Long id) {
+    public Serie update(Serie serie, Long id) {
         Assert.notNull(id,"Não foi possível atualizar o registro");
 
         // Busca o produto no banco de dados
@@ -52,10 +51,7 @@ public class SerieService {
             db.setYear(serie.getYear());
             System.out.println("Serie id " + db.getId());
 
-            // Atualiza a série
-            rep.save(db);
-
-            return SerieDTO.create(db);
+            return rep.save(db);
         } else {
             return null;
             //throw new RuntimeException("Não foi possível atualizar o registro");

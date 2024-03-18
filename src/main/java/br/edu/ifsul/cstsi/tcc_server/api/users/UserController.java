@@ -13,24 +13,21 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@Api(value = "Usuários")
 public class UserController {
     @Autowired
     private UserService service;
 
     @GetMapping()
-    @ApiOperation(value = "Retorna todos usuários cadastrados.")
-    public ResponseEntity<List<UserDTO>> get() {
-        List<UserDTO> list = service.getUsers();
+    public ResponseEntity<List<User>> get() {
+        List<User> list = service.getUsers();
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/info")
-    @ApiOperation(value = "Retorna os detalhes do usuário logado.")
-    public UserDTO userInfo(@AuthenticationPrincipal User user) { //a anotação retorna o user logado
+    public User userInfo(@AuthenticationPrincipal User user) { //a anotação retorna o user logado
 
         //User userLoged = (User) JwtUtil.getUserDetails(); //outra forma de retornar o user logado (nesse projeto)
 
-        return UserDTO.create(user);
+        return user;
     }
 }

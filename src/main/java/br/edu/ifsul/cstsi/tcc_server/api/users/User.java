@@ -19,7 +19,7 @@ public class User {
     private String email;
     private String password;
 
-    @ManyToMany(mappedBy = "usersFavoriter")
+    @ManyToMany(mappedBy = "usersFavoriter", fetch = FetchType.EAGER)
     private List<Serie> favorites; //Nenhum ou mais usuários favoritam nenhuma ou várias séries
 
     @OneToMany(mappedBy = "user")

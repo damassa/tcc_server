@@ -11,34 +11,32 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/series")
-@Api(value = "Séries")
 public class SerieController {
     @Autowired
     private SerieService service;
 
     @GetMapping
-    @ApiOperation(value = "Retorna todas as séries.")
-    public ResponseEntity<List<SerieDTO>> selectAll() {
-        List<SerieDTO> series = service.getSeries();
+    public ResponseEntity<List<Serie>> selectAll() {
+        List<Serie> series = service.getSeries();
         return ResponseEntity.ok(series);
     }
 
     @GetMapping("{id}")
-    @ApiOperation(value = "Retorna uma série pelo campo identificador.")
-    public ResponseEntity<SerieDTO> selectById(@PathVariable("id") Long id) {
-        SerieDTO s = service.getSerieById(id);
-        return s != null ?
-                ResponseEntity.ok(s) :
-                ResponseEntity.notFound().build();
+    public ResponseEntity<Serie> selectById(@PathVariable("id") Long id) {
+        Optional<Serie> s = service.getSerieById(id);
+        if(s.isPresent()) {
+            return ResponseEntity.ok(s.get());
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/name/{name}")
-    @ApiOperation(value = "Retorna uma lista de séries pelo nome.")
-    public ResponseEntity<List<SerieDTO>> selectByName(@PathVariable("name") String name) {
-        List<SerieDTO> series = service.getSeriesByName(name);
+    public ResponseEntity<List<Serie>> selectByName(@PathVariable("name") String name) {
+        List<Serie> series = service.getSeriesByName(name);
         return series.isEmpty() ?
                 ResponseEntity.noContent().build() :
                 ResponseEntity.ok(series);
@@ -46,25 +44,24 @@ public class SerieController {
 
     @PostMapping
     @Secured({"ROLE_ADMIN"})
-    @ApiOperation(value = "Adiciona uma série.")
     public ResponseEntity<String> insert(@RequestBody Serie serie) {
-        SerieDTO s = service.insert(serie);
+        Serie s = service.insert(serie);
         URI location = getUri(s.getId());
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping("{id}")
-    @ApiOperation(value = "Altera os dados de uma série.")
-    public ResponseEntity<SerieDTO> update(@PathVariable("id") Long id, @Valid @RequestBody Serie serie){
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<Serie> update(@PathVariable("id") Long id, @Valid @RequestBody Serie serie){
         serie.setId(id);
-        SerieDTO p = service.update(serie, id);
-        return p != null ?
-                ResponseEntity.ok(p) :
+        Serie s = service.update(serie, id);
+        return s != null ?
+                ResponseEntity.ok(s) :
                 ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("{id}")
-    @ApiOperation(value = "Deleta uma série.")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<String> delete(@PathVariable("id") Long id){
         return service.delete(id) ?
                 ResponseEntity.ok().build() :
