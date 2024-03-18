@@ -21,6 +21,7 @@ public class Episode {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private int duration;
 
     @ManyToOne
     @JoinColumn(name = "series_id", referencedColumnName = "id")

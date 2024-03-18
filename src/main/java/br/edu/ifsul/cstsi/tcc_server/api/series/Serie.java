@@ -30,7 +30,6 @@ public class Serie {
     private String image;
     private String bigImage;
     private String opening_video;
-    private int duration;
     @NotNull
 
     @ManyToMany(fetch = FetchType.EAGER)
