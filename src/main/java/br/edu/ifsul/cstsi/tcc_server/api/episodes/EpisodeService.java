@@ -18,7 +18,7 @@ public class EpisodeService {
 
     public Episode update(Episode episode, Long id) {
         Assert.notNull(id, "Não foi possível atualizar o registro.");
-        Optional<Episode> optional = rep.findById();
+        Optional<Episode> optional = rep.findById(id);
         if(optional.isPresent()) {
             Episode db = optional.get();
 
@@ -31,7 +31,7 @@ public class EpisodeService {
     }
 
     public boolean delete(Long id) {
-        Optional<Episode> optional = rep.findById();
+        Optional<Episode> optional = rep.findById(id);
         if(optional.isPresent()) {
             rep.deleteById(id);
             return true;

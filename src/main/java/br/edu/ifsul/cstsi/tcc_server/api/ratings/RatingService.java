@@ -11,8 +11,6 @@ public class RatingService {
     @Autowired
     private RatingRepository rep;
 
-    public Rating getBestSeries() {} //Filtrar por um número base de estrelas
-
     public Rating insert (Rating rating) {
         Assert.isNull(rating.getId(), "Não foi possível inserir o registro.");
         return rep.save(rating);
