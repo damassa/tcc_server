@@ -16,9 +16,9 @@ public class RatingService {
         return rep.save(rating);
     }
 
-    public Rating update(Rating rating, Long id) {
-        Assert.notNull(id, "Não foi possível atualizar o registro.");
-        Optional<Rating> optional = rep.findById(id);
+    public Rating update(Rating rating) {
+        Assert.notNull(rating.getId(), "Não foi possível atualizar o registro.");
+        Optional<Rating> optional = rep.findRatingById(rating.getId());
         if(optional.isPresent()) {
             Rating db = optional.get();
             db.setComment(rating.getComment());

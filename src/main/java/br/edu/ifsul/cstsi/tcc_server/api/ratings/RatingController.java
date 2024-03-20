@@ -16,7 +16,6 @@ public class RatingController {
     private RatingService service;
 
     @PostMapping
-//    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<String> insert (@RequestBody Rating rating) {
         Rating r = service.insert(rating);
         URI location = getUri(r.getId());
@@ -24,9 +23,8 @@ public class RatingController {
     }
 
     @PutMapping
-    public ResponseEntity<Rating> update(@PathVariable("id") Long id, @Valid @RequestBody Rating rating) {
-        rating.setId(id);
-        Rating r = service.update(rating, id);
+    public ResponseEntity<Rating> update(@RequestBody Rating rating) {
+        Rating r = service.update(rating);
         return r != null ?
                 ResponseEntity.ok(r) :
                 ResponseEntity.notFound().build();

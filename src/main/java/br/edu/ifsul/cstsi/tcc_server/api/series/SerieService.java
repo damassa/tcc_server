@@ -41,7 +41,6 @@ public class SerieService {
             // Copia as propriedades
             db.setName(serie.getName());
             db.setPlot(serie.getPlot());
-            db.setDuration(serie.getDuration());
             db.setCategory(serie.getCategory());
             db.setBigImage(serie.getBigImage());
             db.setImage(serie.getImage());
