@@ -22,7 +22,7 @@ public class SerieService {
     }
 
     public List<Serie> getSeriesByName(String name) {
-        return rep.findByName(name+"%");
+        return rep.findByName("%"+name+"%");
     }
 
     public Serie insert(Serie serie) {
