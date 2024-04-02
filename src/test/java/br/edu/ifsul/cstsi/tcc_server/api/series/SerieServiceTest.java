@@ -62,9 +62,46 @@ class SerieServiceTest {
 
     @Test
     void update() {
+        var s = service.getSerieById(2L).get();
+        var name = s.getName();
+        s.setName("Série Teste Modificada");
+        s.setPlot("Trama de uma série teste modificada.");
+        s.setBigImage("pasdkoapsdA");
+        s.setImage("asdopopkaweA");
+        s.setOpening_video("https://www.youtube.com/watch?v=H9K8-3PHZOU");
+        s.setYear(2000);
+
+        var s2 = service.update(s, s.getId());
+        assertNotNull(s2);
+        assertEquals("Série Teste Modificada", s2.getName());
+
+        s.setName(name);
+        s2 = service.update(s, s.getId());
+        assertNotNull(s2);
     }
 
     @Test
     void delete() {
+        var serie = new Serie();
+        serie.setName("ASDASD");
+        serie.setPlot("OIDFOIJFDSOI OSIDFJOSIDF");
+        serie.setBigImage("ODIODOSDIFOJD");
+        serie.setImage("AUIAAA");
+        serie.setOpening_video("QWWW");
+        serie.setYear(2024);
+
+        var s = service.insert(serie);
+
+        assertNotNull(s);
+
+        Long id = s.getId();
+        assertNotNull(id);
+        s = service.getSerieById(id).get();
+        assertNotNull(s);
+
+        service.delete(id);
+        if(service.getSerieById(id).isPresent()) {
+            fail("A série não foi excluída.");
+        }
     }
 }

@@ -7,4 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EpisodeRepository extends JpaRepository<Episode, Long> {
+//    @Query(value = "SELECT e.name FROM episodes e WHERE e.name LIKE ?1", nativeQuery = true)
+//    List<Episode> findByName(String name);
 }
