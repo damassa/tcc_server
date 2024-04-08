@@ -31,8 +31,8 @@ public class RatingController {
     }
 
     @DeleteMapping
-    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
-        return service.delete(id) ?
+    public ResponseEntity<String> delete(@RequestBody RatingKey rkId) {
+        return service.delete(rkId) ?
                 ResponseEntity.ok().build() :
                 ResponseEntity.notFound().build();
     }

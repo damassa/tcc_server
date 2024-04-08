@@ -12,7 +12,7 @@ public class RatingService {
     private RatingRepository rep;
 
     public Rating insert (Rating rating) {
-        Assert.isNull(rating.getId(), "Não foi possível inserir o registro.");
+        Assert.notNull(rating.getId(), "Não foi possível inserir o registro.");
         return rep.save(rating);
     }
 
@@ -29,10 +29,10 @@ public class RatingService {
         }
     }
 
-    public boolean delete(Long id) {
-        Optional<Rating> optional = rep.findById(id);
+    public boolean delete(RatingKey id) {
+        Optional<Rating> optional = rep.findRatingById(id);
         if(optional.isPresent()) {
-            rep.deleteById(id);
+            rep.delete(optional.get());
             return true;
         } else {
             return false;
