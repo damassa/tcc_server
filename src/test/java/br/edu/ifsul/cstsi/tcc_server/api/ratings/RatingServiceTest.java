@@ -76,6 +76,28 @@ class RatingServiceTest {
     }
 
     @Test
-    void delete() {
+    void delete() { //TODO: Realmente ver com o professor se tá funcionando (mesmo tendo passado 2x)
+        var rating = new Rating();
+        rating.setId(new RatingKey(1L,2L));
+        rating.setComment("Comentário teste pra ser deletado.");
+        rating.setStars(2);
+        rating.setSerie(serieService.getSerieById(1L).get());
+        rating.setUser(userRep.findById(2L).get());
+
+        var r = service.insert(rating);
+        assertNotNull(r);
+        RatingKey id = r.getId();
+        assertNotNull(id);
+        var rt = rep.findRatingById(id);
+        assertNotNull(rt);
+
+        assertEquals("Comentário teste pra ser deletado.", rt.get().getComment());
+        assertEquals(2, rt.get().getStars());
+
+        var r2 = service.delete(id);
+
+        if (rep.findRatingById(id).isPresent()) {
+            fail("A avaliação foi excluída.");
+        }
     }
 }
