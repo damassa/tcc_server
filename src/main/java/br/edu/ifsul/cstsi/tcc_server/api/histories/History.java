@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
+import java.time.LocalTime;
+
 @Entity(name = "history")
 @Table(name = "histories")
 @Data
@@ -27,5 +29,5 @@ public class History { //Intuito da tabela é pegar o tempo do episódio assisti
     @JoinColumn(name = "user_id")
     User user;
 
-    private Time pausedAt;
+    private LocalTime pausedAt;
 }

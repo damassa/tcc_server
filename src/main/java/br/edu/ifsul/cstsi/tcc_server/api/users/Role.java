@@ -1,13 +1,11 @@
 package br.edu.ifsul.cstsi.tcc_server.api.users;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
-@Entity
+@Entity(name = "Role")
+@Table(name = "role")
 @Data
 public class Role implements GrantedAuthority {
     @Id

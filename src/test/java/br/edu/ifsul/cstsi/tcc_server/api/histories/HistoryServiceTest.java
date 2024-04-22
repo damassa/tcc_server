@@ -1,15 +1,18 @@
 package br.edu.ifsul.cstsi.tcc_server.api.histories;
 
 import br.edu.ifsul.cstsi.tcc_server.TccServerApplication;
+import br.edu.ifsul.cstsi.tcc_server.api.episodes.EpisodeRepository;
 import br.edu.ifsul.cstsi.tcc_server.api.episodes.EpisodeService;
 import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = TccServerApplication.class)
-class HistoryServiceTest { //TODO: Revisar com o professor
+class HistoryServiceTest {
     @Autowired
     private HistoryService service;
     @Autowired
@@ -18,12 +21,15 @@ class HistoryServiceTest { //TODO: Revisar com o professor
     private EpisodeService episodeService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EpisodeRepository episodeRep;
     @Test
     void insert() {
         var history = new History();
         history.setId(new HistoryKey(1L, 2L));
-        //history.setEpisode(episodeService);
-        history.setPausedAt(15:23:01);
+        history.setUser(userRepository.findById(2L).get());
+        history.setEpisode(episodeRep.findById(1L).get());
+        history.setPausedAt(LocalTime.parse("15:23"));
 
         var h = service.insert(history);
         assertNotNull(h);
@@ -32,7 +38,7 @@ class HistoryServiceTest { //TODO: Revisar com o professor
         var hr = rep.findHistoryById(id);
         assertNotNull(hr);
 
-        assertEquals(15:23:01, hr.get().getPausedAt());
+        assertEquals(LocalTime.parse("15:23"), hr.get().getPausedAt());
 
         service.delete(id);
         if(rep.findHistoryById(id).isPresent()) {
@@ -44,10 +50,11 @@ class HistoryServiceTest { //TODO: Revisar com o professor
     void update() {
         var history = new History();
         history.setId(new HistoryKey(1L, 2L));
-        history.setPausedAt();
+        //history.setPausedAt();
     }
 
     @Test
     void delete() {
+        insert();
     }
 }

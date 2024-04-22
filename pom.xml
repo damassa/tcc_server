@@ -2,10 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <!-- Springboot -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.3</version>
+        <version>3.2.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>br.edu.ifsul.cstsi</groupId>
@@ -17,82 +18,84 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+        <!-- Para os Controllers do app-->
+        <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/web.html -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- Para o JPA do app -->
+        <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/data.html#data.sql.jpa-and-spring-data -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
+        <!-- Para o data source no perfil Desenvolvimento (conector do banco de dados) -->
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Para adicionar segurança no app -->
+        <!-- Isso ativa uma configuração padrão de vários filtros e outros componentes -->
+        <!-- https://docs.spring.io/spring-boot/docs/current/reference/html/web.html#web.security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- Para o JWT -->
+        <!-- https://oauth.net/2/ -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>4.4.0</version>
+        </dependency>
+
+        <!-- Para a Validação da integridade dos dados do app -->
+        <!-- https://docs.spring.io/spring-framework/docs/4.1.x/spring-framework-reference/html/validation.html -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Para Testes do app-->
+        <!--
+            O que vem em no spring-boot-starter-test?
+            Spring Boot Test: utilitários de teste orientados ao Spring Boot
+            JSONPath: a linguagem de consulta para documentos JSON
+            AssertJ: API fluente para declaração de resultados
+            Hamcrest: Biblioteca de matchers (para uso de Regex)
+            JUnit 5: Biblioteca fundamental para escrever casos de teste
+            Mockito: estrutura de simulação para construção de casos de teste
+            JSONassert: Biblioteca de assertivas voltadas para documentos JSON
+            Spring Test: utilitários de teste do Spring Framework
+            XMLUnit: Kit de ferramentas para verificação de documentos XML
+        -->
+        <!-- Essa dependência é adicionada automaticamente ao criar o projeto -->
+        <!-- https://docs.spring.io/spring-security/reference/getting-spring-security.html -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Para os testes (essa dependência deve ser adicionada ao incluir a dependência de segurança no app) -->
+        <!-- https://docs.spring.io/spring-security/reference/servlet/test/index.html -->
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>5.7.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>6.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>1.5.20</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>5.3.23</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.15.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.15.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.14.2</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Útil -  Para o Desenvolvimento do app-->
+        <!-- Lombok (para os Boilerplates das classes de modelo, getters, setters, etc) -->
+        <!-- https://projectlombok.org/features/ -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

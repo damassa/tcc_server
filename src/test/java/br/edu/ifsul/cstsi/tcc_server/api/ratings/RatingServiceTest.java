@@ -76,7 +76,7 @@ class RatingServiceTest {
     }
 
     @Test
-    void delete() { //TODO: Realmente ver com o professor se tá funcionando (mesmo tendo passado 2x)
+    void delete() {
         var rating = new Rating();
         rating.setId(new RatingKey(1L,2L));
         rating.setComment("Comentário teste pra ser deletado.");
@@ -94,7 +94,7 @@ class RatingServiceTest {
         assertEquals("Comentário teste pra ser deletado.", rt.get().getComment());
         assertEquals(2, rt.get().getStars());
 
-        var r2 = service.delete(id);
+        service.delete(id);
 
         if (rep.findRatingById(id).isPresent()) {
             fail("A avaliação foi excluída.");
