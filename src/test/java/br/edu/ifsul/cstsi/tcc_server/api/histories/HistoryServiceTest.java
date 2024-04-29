@@ -7,11 +7,13 @@ import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = TccServerApplication.class)
+@ActiveProfiles("test")
 class HistoryServiceTest {
     @Autowired
     private HistoryService service;
@@ -47,7 +49,7 @@ class HistoryServiceTest {
     }
 
     @Test
-    void update() {
+    void update() {//TODO: Rever como lida com o PausedAt para deixar o teste certo
         var history = new History();
         history.setId(new HistoryKey(1L, 2L));
         //history.setPausedAt();

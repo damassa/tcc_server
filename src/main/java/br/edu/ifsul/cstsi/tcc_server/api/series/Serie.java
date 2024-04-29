@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.antlr.v4.runtime.misc.NotNull;
-import org.modelmapper.ModelMapper;
+import org.modelmapper.ModelMapper; //TODO: Revisar com o professor se realmente precisa da dependência
 
 import java.util.List;
 @Entity(name = "Serie")

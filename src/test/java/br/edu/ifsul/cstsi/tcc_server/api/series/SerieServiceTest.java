@@ -4,9 +4,11 @@ import br.edu.ifsul.cstsi.tcc_server.TccServerApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = TccServerApplication.class)
+@ActiveProfiles("test")
 class SerieServiceTest {
     @Autowired
     private SerieService service;
@@ -21,7 +23,9 @@ class SerieServiceTest {
         var serie = service.getSerieById(2L);
         assertNotNull(serie);
         assertEquals("J.A.Q.K Dengekitai", serie.get().getName());
-        //TODO: Não esquecer de testar as junções!!!!!
+        assertEquals(1, serie.get().getEpisodes().size());
+        assertEquals(1, serie.get().getUsersFavoriter().size());
+        assertEquals(1, serie.get().getRatings().size());
     }
 
     @Test

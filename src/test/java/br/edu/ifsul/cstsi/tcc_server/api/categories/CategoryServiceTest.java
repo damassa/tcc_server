@@ -4,11 +4,12 @@ import br.edu.ifsul.cstsi.tcc_server.TccServerApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.stereotype.Service;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = TccServerApplication.class)
+@ActiveProfiles("test")
 class CategoryServiceTest {
     @Autowired
     private CategoryService service;
@@ -20,7 +21,7 @@ class CategoryServiceTest {
 
     @Test
     void getCategoryById() {
-        var category = service.getCategoryById(2L);
+        var category = service.getCategoryById(1L);
         assertNotNull(category);
         assertEquals("Super Sentai", category.get().getName());
     }

@@ -3,13 +3,14 @@ package br.edu.ifsul.cstsi.tcc_server.api.ratings;
 import br.edu.ifsul.cstsi.tcc_server.TccServerApplication;
 import br.edu.ifsul.cstsi.tcc_server.api.series.SerieService;
 import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
-import br.edu.ifsul.cstsi.tcc_server.api.users.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = TccServerApplication.class)
+@ActiveProfiles("test")
 class RatingServiceTest {
     @Autowired
     private RatingService service;
