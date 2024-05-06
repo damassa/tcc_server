@@ -52,7 +52,8 @@ class HistoryServiceTest {
     void update() {//TODO: Rever como lida com o PausedAt para deixar o teste certo
         var history = new History();
         history.setId(new HistoryKey(1L, 2L));
-        //history.setPausedAt();
+        history.setPausedAt(LocalTime.parse("15:23"));
+
     }
 
     @Test
