@@ -49,6 +49,7 @@ class RatingServiceTest {
 
     @Test
     void update() {
+        //ARRANGE
         var rating = new Rating();
         rating.setId(new RatingKey(1L,2L));
         rating.setComment("Comentário teste.");
@@ -58,22 +59,24 @@ class RatingServiceTest {
 
         var r = service.insert(rating);
         assertNotNull(r);
-        RatingKey id = r.getId();
-        assertNotNull(id);
-        var rt = rep.findRatingById(id);
-        assertNotNull(rt);
 
-        assertEquals("Comentário teste.", rt.get().getComment());
-        assertEquals(5, rt.get().getStars());
-
-        r.setId(new RatingKey(1L, 2L));
         r.setComment("Comentário teste atualizado.");
         r.setStars(4);
-        rating.setSerie(serieService.getSerieById(1L).get());
-        rating.setUser(userRep.findById(2L).get());
+        r.setSerie(serieService.getSerieById(1L).get());
+        r.setUser(userRep.findById(2L).get());
 
-        var r2 = service.update(rating);
+        //ACT
+        var r2 = service.update(r);
+
+        //ASSERT
         assertNotNull(r2);
+        assertEquals("Comentário teste atualizado.", r2.getComment());
+        assertEquals(4, r2.getStars());
+
+        service.delete(r2.getId());
+        if (rep.findRatingById(r2.getId()).isPresent()) {
+            fail("A avaliação foi excluída.");
+        }
     }
 
     @Test

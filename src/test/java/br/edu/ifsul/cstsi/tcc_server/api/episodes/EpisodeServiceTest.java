@@ -37,10 +37,7 @@ class EpisodeServiceTest {
 
         assertEquals("Episódio Teste", e.getName());
         assertEquals(20, e.getDuration());
-        /*
-        assertEquals(serieService.getSerieById(1L).get(), e.getSerie());
-        assertNull(e.getHistories());
-        */
+
 
         service.delete(id);
         if(rep.findById(id).isPresent()) {
@@ -50,6 +47,24 @@ class EpisodeServiceTest {
 
     @Test
     void update() {
+        // ARRANGE
+        var epOriginal = rep.findById(1L).get(); //episódio original na base de dados
+        var epMock = new Episode();
+        epMock.setId(epOriginal.getId());
+        epMock.setName("Teste");
+        epMock.setDuration(20);
+
+        // ACT
+        var episodeAltered = service.update(epMock, epMock.getId());
+
+        // ASSERT
+        assertNotNull(episodeAltered);
+        assertEquals("Teste", episodeAltered.getName());
+        assertEquals(20, episodeAltered.getDuration());
+
+        //volta ao valor original (para manter a consistência do banco de dados)
+        var episodeOriginal = service.update(epOriginal, epOriginal.getId());
+        assertNotNull(episodeOriginal);
     }
 
     @Test

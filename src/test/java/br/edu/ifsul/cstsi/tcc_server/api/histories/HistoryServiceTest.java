@@ -1,8 +1,10 @@
 package br.edu.ifsul.cstsi.tcc_server.api.histories;
 
 import br.edu.ifsul.cstsi.tcc_server.TccServerApplication;
+import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
 import br.edu.ifsul.cstsi.tcc_server.api.episodes.EpisodeRepository;
 import br.edu.ifsul.cstsi.tcc_server.api.episodes.EpisodeService;
+import br.edu.ifsul.cstsi.tcc_server.api.ratings.RatingKey;
 import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +51,33 @@ class HistoryServiceTest {
     }
 
     @Test
-    void update() {//TODO: Rever como lida com o PausedAt para deixar o teste certo
+    void update() {
+        //ARRANGE
         var history = new History();
         history.setId(new HistoryKey(1L, 2L));
-        history.setPausedAt(LocalTime.parse("15:23"));
+        history.setPausedAt(LocalTime.parse("19:24"));
+        history.setEpisode(episodeRep.findById(1L).get());
+        history.setUser(userRepository.findById(2L).get());
 
+        var h = service.insert(history);
+        assertNotNull(h);
+
+        h.setId(new HistoryKey(1L, 2L));
+        h.setPausedAt(LocalTime.parse("18:12"));
+        h.setEpisode(episodeRep.findById(1L).get());
+        h.setUser(userRepository.findById(2L).get());
+
+        //ACT
+        var h2 = service.update(h);
+
+        //ASSERT
+        assertNotNull(h2);
+        assertEquals(LocalTime.parse("18:12"), h2.getPausedAt());
+
+        service.delete(h2.getId());
+        if (rep.findHistoryById(h2.getId()).isPresent()) {
+            fail("O histórico foi excluído.");
+        }
     }
 
     @Test
