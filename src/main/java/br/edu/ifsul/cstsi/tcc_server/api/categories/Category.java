@@ -21,6 +21,6 @@ public class Category {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
     private List<Serie> series; //1 categoria pertence a várias séries
 }

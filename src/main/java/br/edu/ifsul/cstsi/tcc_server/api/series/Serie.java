@@ -41,7 +41,7 @@ public class Serie {
     @JoinColumn(name = "users_id", referencedColumnName = "id")
     private User user; //Várias séries são cadastradas por 1 usuário admin
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categories_id", referencedColumnName = "id")
     private Category category; //Nenhuma ou várias séries possuem apenas 1 categoria
 

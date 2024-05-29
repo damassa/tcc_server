@@ -20,7 +20,7 @@ public class CategoryService {
     }
 
     public List<Category> getCategoriesByName(String name) {
-        return rep.findByName(name+"%");
+        return rep.findByName("%"+name+"%");
     }
 
     public Category insert (Category category) {

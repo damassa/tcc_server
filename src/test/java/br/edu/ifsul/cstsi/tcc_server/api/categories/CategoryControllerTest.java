@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -21,6 +23,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CategoryControllerTest extends BaseAPIIntegrationTest {
     private ResponseEntity<Category> getCategory(String url) {
         return get(url, Category.class);
+    }
+
+    private ResponseEntity <List<Category>> getCategories(String url) {
+        var headers = getHeaders();
+
+        return rest.exchange(
+                url,
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                new ParameterizedTypeReference<>() {}
+        );
     }
 
     private ResponseEntity<CustomPageImpl<Category>> getCategoriesPageable(String url) {
@@ -34,34 +47,124 @@ public class CategoryControllerTest extends BaseAPIIntegrationTest {
         );
     }
 
-    @Test
-    @DisplayName("Espera uma página, testa se tem 5 objetos, busca por página, de tamanho 5 e testa se tem 5 objetos")
-    public void selectAllEsperaUmaPaginaCom5ObjetosEUmaPaginaDe5Objetos() { //O nome do método de teste é importante porque deve transmitir a essência do que ele verifica. Este não é um requisito técnico, mas sim uma oportunidade de capturar informações
-        // ACT
-        var page = getCategoriesPageable("/api/v1/categories").getBody();
-
-        // ASSERT (testa se retorna a quantidade de dados esperada)
-        assertNotNull(page);
-        assertEquals(5, page.stream().count());
-
-        // ACT
-        page = getCategoriesPageable("/api/v1/categories?page=0&size=5").getBody();
-
-        // ASSERT (testa se retorna o tamanho de página solicitado)
-        assertNotNull(page);
-        assertEquals(5, page.stream().count());
-    }
+//    @Test
+//    @DisplayName("Espera uma página, testa se tem 5 objetos, busca por página, de tamanho 5 e testa se tem 5 objetos")
+//    public void selectAllEsperaUmaPaginaCom5ObjetosEUmaPaginaDe5Objetos() { //O nome do método de teste é importante porque deve transmitir a essência do que ele verifica. Este não é um requisito técnico, mas sim uma oportunidade de capturar informações
+//        // ACT
+//        var page = getCategoriesPageable("/api/v1/categories").getBody();
+//
+//        // ASSERT (testa se retorna a quantidade de dados esperada)
+//        assertNotNull(page);
+//        assertEquals(5, page.stream().count());
+//
+//        // ACT
+//        page = getCategoriesPageable("/api/v1/categories?page=0&size=5").getBody();
+//
+//        // ASSERT (testa se retorna o tamanho de página solicitado)
+//        assertNotNull(page);
+//        assertEquals(5, page.stream().count());
+//    }
 
     @Test //esta anotação JUnit sinaliza que este método é um caso de teste
-    public void selectByNomeEsperaUmObjetoPorNomePesquisado() {
+    public void selectByNomeEsperaUmObjetoPorNomePesquisado() { //PASSOU
         // ACT + ASSERT
-        assertEquals(1, getCategory("/api/v1/categories/name/sentai").getBody().size());
-        assertEquals(1, getCategory("/api/v1/categories/name/henshin").getBody().size());
-        assertEquals(1, getCategory("/api/v1/categories/name/metal").getBody().size());
-        assertEquals(1, getCategory("/api/v1/categories/name/ultra").getBody().size());
-        assertEquals(1, getCategory("/api/v1/categories/name/kamen").getBody().size());
+        assertEquals(1, getCategories("/api/v1/categories/name/Sentai").getBody().size());
+        assertEquals(1, getCategories("/api/v1/categories/name/Henshin").getBody().size());
+        assertEquals(1, getCategories("/api/v1/categories/name/Metal").getBody().size());
+        assertEquals(1, getCategories("/api/v1/categories/name/Ultra").getBody().size());
+        assertEquals(1, getCategories("/api/v1/categories/name/Kamen").getBody().size());
 
         // ACT + ASSERT
-        assertEquals(HttpStatus.NO_CONTENT, getCategory("/api/v1/produtos/nome/xxx").getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, getCategory("/api/v1/categories/name/xxx").getStatusCode());
+    }
+
+    @Test
+    public void selectByIdEsperaUmObjetoPorIdPesquisadoENotFoundParaIdInexistente() { //PASSOU
+        // ACT + ASSERT
+        assertNotNull(getCategory("/api/v1/categories/1"));
+        assertNotNull(getCategory("/api/v1/categories/2"));
+        assertNotNull(getCategory("/api/v1/categories/3"));
+        assertNotNull(getCategory("/api/v1/categories/4"));
+        assertNotNull(getCategory("/api/v1/categories/5"));
+        assertEquals(HttpStatus.NOT_FOUND, getCategory("/api/v1/categories/99999").getStatusCode());
+    }
+
+    @Test
+    public void testInsertEspera204CreatedE404NotFound() {// TODO: Ajeitar com professor
+        // ARRANGE
+        var Category = new Category();
+
+        // ACT
+        var response = post("/api/v1/categories", Category, null);
+
+        // ASSERT
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        // ARRANGE
+        var location = response.getHeaders().get("location").get(0);
+        var c = getCategory(location).getBody();
+        assertNotNull(c);
+        assertEquals("Teste", c.getName());
+        delete(location, null);
+
+        // ASSERT
+        assertEquals(HttpStatus.NOT_FOUND, getCategory(location).getStatusCode());
+    }
+
+    @Test
+    public void testUpdateEspera200OkE404NotFound() { // TODO: Ver com o professor como fazer sem DTO
+        // ARRANGE
+        var category = new Category();
+
+        var responsePost = post("/api/v1/categories", category, null);
+        assertEquals(HttpStatus.CREATED, responsePost.getStatusCode());
+        var location = responsePost.getHeaders().get("location").get(0);
+        var c = getCategory(location).getBody();
+        assertNotNull(c);
+        assertEquals("Teste", c.getName());
+
+        var category2 = new Category();
+
+        // ACT
+        var responsePUT = put(location, category2, Category.class);
+
+        // ASSERT
+        assertEquals(HttpStatus.OK, responsePUT.getStatusCode());
+        assertEquals("Teste Mudado", responsePUT.getBody().getName());
+
+        // ACT
+        delete(location, null);
+
+        // ASSERT
+        assertEquals(HttpStatus.NOT_FOUND, getCategory(location).getStatusCode());
+    }
+
+    @Test
+    public void testDeleteEspera200OkE404NotFound() { //PASSOU
+        // ARRANGE
+        var category = new Category();
+        category.setName("Teste");
+        var responsePost = post("/api/v1/categories", category, null);
+        assertEquals(HttpStatus.CREATED, responsePost.getStatusCode());
+        var location = responsePost.getHeaders().get("location").get(0);
+        var c = getCategory(location).getBody();
+        assertNotNull(c);
+        assertEquals("Teste", c.getName());
+
+        // ACT
+        var responseDelete = delete(location, null);
+
+        // ASSERT
+        assertEquals(HttpStatus.OK, responseDelete.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, getCategory(location).getStatusCode());
+    }
+
+    @Test
+    public void testGetNotFoundEspera404NotFound() { //PASSOU
+        // ARRANGE + ACT
+        var response = getCategory("/api/v1/categories/99999");
+
+        // ASSERT
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

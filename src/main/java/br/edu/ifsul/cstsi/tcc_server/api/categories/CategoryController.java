@@ -26,15 +26,14 @@ public class CategoryController {
     @GetMapping("{id}")
     public ResponseEntity<Category> selectById(@PathVariable("id") Long id) {
         Optional<Category> c = service.getCategoryById(id);
-        if(c.isPresent()) {
-            return ResponseEntity.ok(c.get());
-        }
-        return ResponseEntity.notFound().build();
+        return c.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/name/{name}")
     public ResponseEntity<List<Category>> selectByName(@PathVariable("name") String name) {
+        System.out.println(name);
         List<Category> categories = service.getCategoriesByName(name);
+        System.out.println(categories);
         return categories.isEmpty() ?
                 ResponseEntity.noContent().build() :
                 ResponseEntity.ok(categories);
