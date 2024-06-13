@@ -36,34 +36,22 @@ public class CategoryControllerTest extends BaseAPIIntegrationTest {
         );
     }
 
-    private ResponseEntity<CustomPageImpl<Category>> getCategoriesPageable(String url) {
-        var headers = getHeaders();
-
-        return rest.exchange(
-                url,
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                new ParameterizedTypeReference<>() {}
-        );
+    @Test
+    public void selectAllEspera5Categorias() {
+        // ACT + ASSERT
+        assertEquals(5, getCategories("/api/v1/categories").getBody().size());
     }
 
-//    @Test
-//    @DisplayName("Espera uma página, testa se tem 5 objetos, busca por página, de tamanho 5 e testa se tem 5 objetos")
-//    public void selectAllEsperaUmaPaginaCom5ObjetosEUmaPaginaDe5Objetos() { //O nome do método de teste é importante porque deve transmitir a essência do que ele verifica. Este não é um requisito técnico, mas sim uma oportunidade de capturar informações
-//        // ACT
-//        var page = getCategoriesPageable("/api/v1/categories").getBody();
-//
-//        // ASSERT (testa se retorna a quantidade de dados esperada)
-//        assertNotNull(page);
-//        assertEquals(5, page.stream().count());
-//
-//        // ACT
-//        page = getCategoriesPageable("/api/v1/categories?page=0&size=5").getBody();
-//
-//        // ASSERT (testa se retorna o tamanho de página solicitado)
-//        assertNotNull(page);
-//        assertEquals(5, page.stream().count());
-//    }
+    @Test
+    public void selectByIdEsperaUmObjetoPorIdPesquisadoENotFoundParaIdInexistente() { //PASSOU
+        // ACT + ASSERT
+        assertNotNull(getCategory("/api/v1/categories/1"));
+        assertNotNull(getCategory("/api/v1/categories/2"));
+        assertNotNull(getCategory("/api/v1/categories/3"));
+        assertNotNull(getCategory("/api/v1/categories/4"));
+        assertNotNull(getCategory("/api/v1/categories/5"));
+        assertEquals(HttpStatus.NOT_FOUND, getCategory("/api/v1/categories/99999").getStatusCode());
+    }
 
     @Test //esta anotação JUnit sinaliza que este método é um caso de teste
     public void selectByNomeEsperaUmObjetoPorNomePesquisado() { //PASSOU
@@ -79,23 +67,13 @@ public class CategoryControllerTest extends BaseAPIIntegrationTest {
     }
 
     @Test
-    public void selectByIdEsperaUmObjetoPorIdPesquisadoENotFoundParaIdInexistente() { //PASSOU
-        // ACT + ASSERT
-        assertNotNull(getCategory("/api/v1/categories/1"));
-        assertNotNull(getCategory("/api/v1/categories/2"));
-        assertNotNull(getCategory("/api/v1/categories/3"));
-        assertNotNull(getCategory("/api/v1/categories/4"));
-        assertNotNull(getCategory("/api/v1/categories/5"));
-        assertEquals(HttpStatus.NOT_FOUND, getCategory("/api/v1/categories/99999").getStatusCode());
-    }
-
-    @Test
-    public void testInsertEspera204CreatedE404NotFound() {// TODO: Ajeitar com professor
+    public void testInsertEspera204CreatedE404NotFound() {// PASSOU
         // ARRANGE
-        var Category = new Category();
+        var category = new Category();
+        category.setName("Teste");
 
         // ACT
-        var response = post("/api/v1/categories", Category, null);
+        var response = post("/api/v1/categories", category, null);
 
         // ASSERT
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -112,9 +90,10 @@ public class CategoryControllerTest extends BaseAPIIntegrationTest {
     }
 
     @Test
-    public void testUpdateEspera200OkE404NotFound() { // TODO: Ver com o professor como fazer sem DTO
+    public void testUpdateEspera200OkE404NotFound() { // PASSOU
         // ARRANGE
         var category = new Category();
+        category.setName("Teste");
 
         var responsePost = post("/api/v1/categories", category, null);
         assertEquals(HttpStatus.CREATED, responsePost.getStatusCode());
@@ -124,13 +103,14 @@ public class CategoryControllerTest extends BaseAPIIntegrationTest {
         assertEquals("Teste", c.getName());
 
         var category2 = new Category();
+        category2.setName("Teste Alterado");
 
         // ACT
         var responsePUT = put(location, category2, Category.class);
 
         // ASSERT
         assertEquals(HttpStatus.OK, responsePUT.getStatusCode());
-        assertEquals("Teste Mudado", responsePUT.getBody().getName());
+        assertEquals("Teste Alterado", responsePUT.getBody().getName());
 
         // ACT
         delete(location, null);
