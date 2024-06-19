@@ -4,51 +4,44 @@ import br.edu.ifsul.cstsi.tcc_server.api.categories.Category;
 import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
 import br.edu.ifsul.cstsi.tcc_server.api.ratings.Rating;
 import br.edu.ifsul.cstsi.tcc_server.api.users.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.modelmapper.ModelMapper; //TODO: Revisar com o professor se realmente precisa da dependência
 
 import java.util.List;
 @Entity(name = "Serie")
 @Table(name = "series")
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Serie {
+@JsonIgnoreProperties(value = {"user"})
+public class Serie { // TODO: Criar DTO
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @NotNull
     private String plot;
-    @NotNull
     private int year;
-    @NotNull
     private String image;
     private String bigImage;
     private String opening_video;
-    @NotNull
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "favorites",
-            joinColumns = @JoinColumn(name = "serie_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<User> usersFavoriter;
-    @ManyToOne
+    @ManyToOne // NÃO QUERO BUSCAR ISSO
     @JoinColumn(name = "users_id", referencedColumnName = "id")
     private User user; //Várias séries são cadastradas por 1 usuário admin
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER) // BUSCAR ISSO
     @JoinColumn(name = "categories_id", referencedColumnName = "id")
     private Category category; //Nenhuma ou várias séries possuem apenas 1 categoria
 
-    @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER) // BUSCAR ISSO
     private List<Episode> episodes; //1 série possui vários episódios
 
-    @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER) // BUSCAR ISSO
     List<Rating> ratings;
 
     public static Serie create(Serie s) {

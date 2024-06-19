@@ -36,13 +36,13 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
     }
 
     @Test
-    public void selectAllEspera2Series() {
+    public void selectAllEspera2Series() { // PASSOU
         // ACT + ASSERT
         assertEquals(2, getSeries("/api/v1/series").getBody().size());
     }
 
     @Test
-    public void selectByIdEsperaUmObjetoPorIdPesquisadoENotFoundParaIdInexistente() {
+    public void selectByIdEsperaUmObjetoPorIdPesquisadoENotFoundParaIdInexistente() { // PASSOU
         // ACT + ASSERT
         assertNotNull(getSerie("/api/v1/series/1"));
         assertNotNull(getSerie("/api/v1/series/2"));
@@ -50,10 +50,10 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
     }
 
     @Test
-    public void selectByNameEsperaUmObjetoPorNomePesquisado() {
+    public void selectByNameEsperaUmObjetoPorNomePesquisado() { // PASSOU
         // ACT + ASSERT
-        assertEquals(1, getSeries("/api/v1/series/Gorenger").getBody().size());
-        assertEquals(1, getSeries("/api/v1/series/Dengekitai").getBody().size());
+        assertEquals(1, getSeries("/api/v1/series/name/Gorenger").getBody().size());
+        assertEquals(1, getSeries("/api/v1/series/name/Dengekitai").getBody().size());
 
         // ACT + ASSERT
         assertEquals(HttpStatus.NO_CONTENT, getSerie("/api/v1/series/name/xxx").getStatusCode());
@@ -88,7 +88,7 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
     }
 
     @Test
-    public void updateEspera200OkE404NotFound() {
+    public void updateEspera200OkE404NotFound() { // PASSOU
         // ARRANGE
         var serie = new Serie();
         serie.setName("Série Teste");
@@ -104,14 +104,19 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
         var s = getSerie(location).getBody();
         assertNotNull(s);
         assertEquals("Série Teste", s.getName());
+        assertEquals(2024, s.getYear());
+        assertEquals("ASDASDASDASd", s.getOpening_video());
+        assertEquals("ASDAFDSAF", s.getImage());
+        assertEquals("Uma série legal.", s.getPlot());
+        assertEquals("FGFSDGFSDG", s.getBigImage());
 
         var serie2 = new Serie();
-        serie.setName("Série Teste Modificada");
-        serie.setYear(2023);
-        serie.setOpening_video("ASDASDASDASd ALTERADO");
-        serie.setImage("ASDAFDSAF ALTERADO");
-        serie.setPlot("Uma série legal só que alterada.");
-        serie.setBigImage("FGFSDGFSDG ALTERADO");
+        serie2.setName("Série Teste Modificada");
+        serie2.setYear(2023);
+        serie2.setOpening_video("ASDASDASDASd ALTERADO");
+        serie2.setImage("ASDAFDSAF ALTERADO");
+        serie2.setPlot("Uma série legal só que alterada.");
+        serie2.setBigImage("FGFSDGFSDG ALTERADO");
 
         // ACT
         var responsePUT = put(location, serie2, Serie.class);

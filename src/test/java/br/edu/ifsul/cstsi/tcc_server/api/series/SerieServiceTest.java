@@ -24,7 +24,6 @@ class SerieServiceTest {
         assertNotNull(serie);
         assertEquals("J.A.Q.K Dengekitai", serie.get().getName());
         assertEquals(1, serie.get().getEpisodes().size());
-        assertEquals(1, serie.get().getUsersFavoriter().size());
         assertEquals(1, serie.get().getRatings().size());
     }
 

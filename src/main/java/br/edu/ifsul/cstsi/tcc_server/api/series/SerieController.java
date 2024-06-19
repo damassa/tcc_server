@@ -20,16 +20,14 @@ public class SerieController {
     @GetMapping
     public ResponseEntity<List<Serie>> selectAll() {
         List<Serie> series = service.getSeries();
+        System.out.println(series);
         return ResponseEntity.ok(series);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Serie> selectById(@PathVariable("id") Long id) {
         Optional<Serie> s = service.getSerieById(id);
-        if(s.isPresent()) {
-            return ResponseEntity.ok(s.get());
-        }
-        return ResponseEntity.notFound().build();
+        return s.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/name/{name}")

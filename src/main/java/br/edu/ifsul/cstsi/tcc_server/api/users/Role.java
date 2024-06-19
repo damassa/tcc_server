@@ -1,12 +1,15 @@
 package br.edu.ifsul.cstsi.tcc_server.api.users;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity(name = "Role")
 @Table(name = "role")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
