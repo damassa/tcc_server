@@ -1,6 +1,8 @@
 package br.edu.ifsul.cstsi.tcc_server.api.series;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -13,8 +15,8 @@ public class SerieService {
     @Autowired
     private SerieRepository rep;
 
-    public List<Serie> getSeries() {
-        return rep.findAll();
+    public Page<Serie> getSeries(Pageable pagination) {
+        return rep.findAll(pagination);
     }
 
     public Optional<Serie> getSerieById(Long id) {

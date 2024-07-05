@@ -44,6 +44,15 @@ public class Serie { // TODO: Criar DTO
     @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER) // BUSCAR ISSO
     List<Rating> ratings;
 
+    public Serie(String name, String plot, Integer year, String image, String bigImage, String opening_video) {
+        this.name = name;
+        this.plot = plot;
+        this.year = year;
+        this.image = image;
+        this.bigImage = bigImage;
+        this.opening_video = opening_video;
+    }
+
     public static Serie create(Serie s) {
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(s, Serie.class);
