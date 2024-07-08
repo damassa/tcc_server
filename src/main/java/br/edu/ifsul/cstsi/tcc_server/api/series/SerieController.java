@@ -101,53 +101,6 @@ public class SerieController {
         return errors;
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<Serie>> selectAll() {
-//        List<Serie> series = service.getSeries();
-//        System.out.println(series);
-//        return ResponseEntity.ok(series);
-//    }
-//
-//    @GetMapping("{id}")
-//    public ResponseEntity<Serie> selectById(@PathVariable("id") Long id) {
-//        Optional<Serie> s = service.getSerieById(id);
-//        return s.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-//    }
-//
-//    @GetMapping("/name/{name}")
-//    public ResponseEntity<List<Serie>> selectByName(@PathVariable("name") String name) {
-//        List<Serie> series = service.getSeriesByName(name);
-//        return series.isEmpty() ?
-//                ResponseEntity.noContent().build() :
-//                ResponseEntity.ok(series);
-//    }
-//
-//    @PostMapping
-//    @Secured({"ROLE_ADMIN"})
-//    public ResponseEntity<String> insert(@RequestBody Serie serie) {
-//        Serie s = service.insert(serie);
-//        URI location = getUri(s.getId());
-//        return ResponseEntity.created(location).build();
-//    }
-//
-//    @PutMapping("{id}")
-//    @Secured({"ROLE_ADMIN"})
-//    public ResponseEntity<Serie> update(@PathVariable("id") Long id, @Valid @RequestBody Serie serie){
-//        serie.setId(id);
-//        Serie s = service.update(serie, id);
-//        return s != null ?
-//                ResponseEntity.ok(s) :
-//                ResponseEntity.notFound().build();
-//    }
-//
-//    @DeleteMapping("{id}")
-//    @Secured({"ROLE_ADMIN"})
-//    public ResponseEntity<String> delete(@PathVariable("id") Long id){
-//        return service.delete(id) ?
-//                ResponseEntity.ok().build() :
-//                ResponseEntity.notFound().build();
-//    }
-
     //utilitário
     private URI getUri(Long id) {
         return ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
