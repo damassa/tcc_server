@@ -13,7 +13,7 @@ public class ValidationEmailNotConfirmedYet implements ValidationLoginUser {
 
     @Override
     public void validate(UsuarioDTO usuarioDTO) {
-        if(!userRepository.findByLogin(usuarioDTO.email()).isConfirmed()) {
+        if(!userRepository.findByEmail(usuarioDTO.email()).isConfirmed()) {
             throw new ValidationEmailNotConfirmedYetException("Erro: Esse e-mail ainda não foi confirmado. Favor acessar a caixa do e-mail e clicar no link de confirmação.");
         }
     }

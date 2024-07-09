@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TokenConfirmEmail {
+public class TokenConfirmEmail { //TODO: Rever sexta
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

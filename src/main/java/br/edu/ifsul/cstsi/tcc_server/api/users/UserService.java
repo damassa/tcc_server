@@ -43,7 +43,7 @@ public class UserService {
     public boolean confirmEmail(String TokenConfirmation) {
         var token = tokenConfirmEmailRepository.findByToken(TokenConfirmation);
         if(token != null) {
-            var user = rep.findByLogin(token.getUser().getEmail());
+            var user = rep.findByEmail(token.getUser().getEmail());
             user.setConfirmed(true);
             rep.save(user);
             return true;

@@ -1,5 +1,6 @@
-package br.edu.ifsul.cstsi.tcc_server.api.users;
+package br.edu.ifsul.cstsi.tcc_server.api.auth;
 
+import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import org.springframework.data.repository.Repository;
 
 /*

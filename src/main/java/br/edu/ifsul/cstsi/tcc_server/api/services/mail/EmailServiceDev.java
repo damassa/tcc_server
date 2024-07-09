@@ -7,11 +7,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("default")
-public class EmailServiceProd implements EmailService { //TODO: Rever sexta a questão de host, usuário e senha para mandar e-mail
+@Profile({"dev", "test"})
+public class EmailServiceDev implements EmailService { //TODO: Rever sexta a questão de host, usuário e senha para mandar e-mail
     @Autowired
     private JavaMailSender emailSender;
 
+    @Override
     public void sendEmail(String to, String subject, String message) {
         SimpleMailMessage email = new SimpleMailMessage();
         email.setFrom("felipelealdamasceno@gmail.com");

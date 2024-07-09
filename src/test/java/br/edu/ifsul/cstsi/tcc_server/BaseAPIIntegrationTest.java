@@ -1,7 +1,7 @@
 package br.edu.ifsul.cstsi.tcc_server;
 
 import br.edu.ifsul.cstsi.tcc_server.api.infra.security.TokenService;
-import br.edu.ifsul.cstsi.tcc_server.api.users.AutenticacaoService;
+import br.edu.ifsul.cstsi.tcc_server.api.auth.AutenticacaoService;
 import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

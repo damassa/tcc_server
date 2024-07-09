@@ -1,6 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.infra.security;
 
-import br.edu.ifsul.cstsi.tcc_server.api.users.AutenticacaoRepository;
+import br.edu.ifsul.cstsi.tcc_server.api.auth.AutenticacaoRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

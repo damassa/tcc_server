@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.List;
+
 @Entity(name = "Role")
 @Table(name = "role")
 @Getter
@@ -15,6 +17,9 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    @ManyToMany(mappedBy = "role")
+    private List<User> users;
 
     @Override
     public String getAuthority() {

@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"favorites", "insertedSeries", "ratings", "histories", "roles"}) // FUTURAMENTE FAVORITES E RATINGS SAI DAQUI
-public class User implements UserDetails { // TODO: Criar DTO
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,7 +44,7 @@ public class User implements UserDetails { // TODO: Criar DTO
     @OneToMany(mappedBy = "user") // NÃO BUSCAR ISSO
     private List<History> histories;
 
-    @ManyToMany(fetch = FetchType.EAGER) // BUSCAR ISSO
+    @ManyToMany(fetch = FetchType.EAGER) // BUSCAR ISSO (ROLE_ADMIN)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))

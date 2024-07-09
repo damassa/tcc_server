@@ -23,7 +23,7 @@ public class TokenService {
         try {
             var algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
-                .withIssuer("API Produtos Exemplo de TADS")
+                .withIssuer("API World of Tokusatsu")
                 .withSubject(user.getUsername())
                 .withIssuedAt(LocalDateTime.now().toInstant(ZoneOffset.of("-03:00")))
                 .withExpiresAt(dataExpiracao())
@@ -38,7 +38,7 @@ public class TokenService {
         try {
             var algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                .withIssuer("API Produtos Exemplo de TADS")
+                .withIssuer("API World of Tokusatsu")
                 .build()
                 .verify(tokenJWT)
                 .getSubject();
