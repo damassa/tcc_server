@@ -85,11 +85,11 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
     public void insertEspera204CreatedE404NotFound() { //PASSOU
         // ARRANGE
         var SerieDTOPost = new SerieDTOPost(
-                "Série Teste",
-                "Sinopse Teste",
+                "Série Teste Insert",
+                "Sinopse Teste Insert",
                 2025,
-                "asdasdasd",
-                "asdasdasdas",
+                "asdasdasd Insert",
+                "asdasdasdas Insert",
                 "https://www.youtube.com/watch?v=Z0DO0XyS8Ko"
         );
 
@@ -103,11 +103,11 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
         var location = response.getHeaders().get("location").get(0);
         var s = getSerie(location).getBody();
         assertNotNull(s);
-        assertEquals("Série Teste", s.name());
-        assertEquals("Sinopse Teste", s.plot());
+        assertEquals("Série Teste Insert", s.name());
+        assertEquals("Sinopse Teste Insert", s.plot());
         assertEquals(2025, s.year());
-        assertEquals("asdasdasd", s.image());
-        assertEquals("asdasdasdas", s.bigImage());
+        assertEquals("asdasdasd Insert", s.image());
+        assertEquals("asdasdasdas Insert", s.bigImage());
         assertEquals("https://www.youtube.com/watch?v=Z0DO0XyS8Ko", s.opening_video());
         delete(location, null);
 
@@ -118,11 +118,11 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
     public void updateEspera200OkE404NotFound() { // TODO: Rever na orientação
         // ARRANGE
         var SerieDTOPost = new SerieDTOPost(
-                "Série Teste",
-                "Sinopse Teste",
+                "Série Teste Update",
+                "Sinopse Teste Update",
                 2025,
-                "asdasdasd",
-                "asdasdasdas",
+                "asdasdasd Update",
+                "asdasdasdas Update",
                 "https://www.youtube.com/watch?v=Z0DO0XyS8Ko"
         );
 
@@ -131,11 +131,11 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
         var location = responsePost.getHeaders().get("location").get(0);
         var sDto = getSerie(location).getBody();
         assertNotNull(sDto);
-        assertEquals("Série Teste", sDto.name());
-        assertEquals("Sinopse Teste", sDto.plot());
+        assertEquals("Série Teste Update", sDto.name());
+        assertEquals("Sinopse Teste Update", sDto.plot());
         assertEquals(2025, sDto.year());
-        assertEquals("asdasdasd", sDto.image());
-        assertEquals("asdasdasdas", sDto.bigImage());
+        assertEquals("asdasdasd Update", sDto.image());
+        assertEquals("asdasdasdas Update", sDto.bigImage());
         assertEquals("https://www.youtube.com/watch?v=Z0DO0XyS8Ko", sDto.opening_video());
 
         var serieDTOPut = new SerieDTOPut(

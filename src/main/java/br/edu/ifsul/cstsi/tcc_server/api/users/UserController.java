@@ -78,14 +78,14 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value="/confirm-email", method = {RequestMethod.GET, RequestMethod.POST})
-    public ResponseEntity<String> confirmEmail(@RequestParam("token")String confirmationToken) {
-        var isToken = service.confirmEmail(confirmationToken);
-        if(isToken) {
-            return ResponseEntity.ok("E-mail confirmado com sucesso!");
-        }
-       return ResponseEntity.badRequest().build();
-    }
+//    @RequestMapping(value="/confirm-email", method = {RequestMethod.GET, RequestMethod.POST})
+//    public ResponseEntity<String> confirmEmail(@RequestParam("token")String confirmationToken) {
+//        var isToken = service.confirmEmail(confirmationToken);
+//        if(isToken) {
+//            return ResponseEntity.ok("E-mail confirmado com sucesso!");
+//        }
+//       return ResponseEntity.badRequest().build();
+//    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -1,6 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.infra.exception;
 
-import br.edu.ifsul.cstsi.tcc_server.api.users.validations.ValidationEmailNotConfirmedYet;
+//import br.edu.ifsul.cstsi.tcc_server.api.users.validations.ValidationEmailNotConfirmedYet;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -26,15 +26,15 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().build();
     }
 
-    @ExceptionHandler(ValidationEmailRegisteredException.class)
-    public ResponseEntity error400Handler(ValidationEmailRegisteredException ex){ //400 - Bad Request para Erro de Validação das Regras de Negócio
-        return ResponseEntity.badRequest().body(ex.getMessage());
-    }
+//    @ExceptionHandler(ValidationEmailRegisteredException.class)
+//    public ResponseEntity error400Handler(ValidationEmailRegisteredException ex){ //400 - Bad Request para Erro de Validação das Regras de Negócio
+//        return ResponseEntity.badRequest().body(ex.getMessage());
+//    }
 
-    @ExceptionHandler(ValidationEmailNotConfirmedYetException.class)
-    public ResponseEntity error400Handler(ValidationEmailNotConfirmedYetException ex){ //400 - Bad Request para Erro de Validação das Regras de Negócio
-        return ResponseEntity.badRequest().body(ex.getMessage());
-    }
+//    @ExceptionHandler(ValidationEmailNotConfirmedYetException.class)
+//    public ResponseEntity error400Handler(ValidationEmailNotConfirmedYetException ex){ //400 - Bad Request para Erro de Validação das Regras de Negócio
+//        return ResponseEntity.badRequest().body(ex.getMessage());
+//    }
 
     private record ErroValidation(
             String field,
