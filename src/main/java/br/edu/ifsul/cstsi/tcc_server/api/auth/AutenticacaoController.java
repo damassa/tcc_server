@@ -3,6 +3,7 @@ package br.edu.ifsul.cstsi.tcc_server.api.auth;
 import br.edu.ifsul.cstsi.tcc_server.api.infra.security.TokenJwtDTO;
 import br.edu.ifsul.cstsi.tcc_server.api.infra.security.TokenService;
 import br.edu.ifsul.cstsi.tcc_server.api.users.User;
+import br.edu.ifsul.cstsi.tcc_server.api.users.validations.ValidationUserLogin;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController //indica que essa classe deve ser adicionada ao Contexto do aplicativo como um Bean da camada de controle API REST
@@ -26,14 +28,14 @@ public class AutenticacaoController {
     @Autowired //indica ao Spring Boot que ele deve injetar essa dependência para a classe funcionar
     private TokenService tokenService;
 
-//    @Autowired
-//    private List<ValidationLoginUser> validations;
+    @Autowired
+    private List<ValidationUserLogin> validations;
 
     @PostMapping
     public ResponseEntity<TokenJwtDTO> efetuaLogin(@RequestBody @Valid UsuarioDTO data){
         var authenticationDTO = new UsernamePasswordAuthenticationToken(data.email(), data.senha()); //converte o DTO em DTO do Spring Security
 
-//        validations.forEach(v -> v.validate(data));
+        validations.forEach(v -> v.validate(data));
 
         var authentication = manager.authenticate(authenticationDTO); //autentica o usuário (esse objeto contém o usuário e a senha)
         var tokenJWT = tokenService.geraToken((User) authentication.getPrincipal()); //gera o token JWT para enviar na response
