@@ -27,7 +27,7 @@ public class User implements UserDetails {
     private String name;
     private String email;
     private String password;
-//    private boolean isConfirmed = false;
+    private boolean isConfirmed = false;
 
     @ManyToMany(fetch = FetchType.EAGER) // BUSCAR ISSO
     @JoinTable(name = "favorites",

@@ -3,8 +3,10 @@ package br.edu.ifsul.cstsi.tcc_server.api.users;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -78,14 +80,14 @@ public class UserController {
         }
     }
 
-//    @RequestMapping(value="/confirm-email", method = {RequestMethod.GET, RequestMethod.POST})
-//    public ResponseEntity<String> confirmEmail(@RequestParam("token")String confirmationToken) {
-//        var isToken = service.confirmEmail(confirmationToken);
-//        if(isToken) {
-//            return ResponseEntity.ok("E-mail confirmado com sucesso!");
-//        }
-//       return ResponseEntity.badRequest().build();
-//    }
+    @RequestMapping(value="/confirm-email", method = {RequestMethod.GET, RequestMethod.POST})
+    public ResponseEntity<String> confirmEmail(@RequestParam("token")String confirmationToken) {
+        var isToken = service.confirmEmail(confirmationToken);
+        if(isToken) {
+            return ResponseEntity.ok("E-mail confirmado com sucesso!");
+        }
+       return ResponseEntity.badRequest().build();
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -110,7 +112,7 @@ public class UserController {
 //    @GetMapping("/info")
 //    public User userInfo(@AuthenticationPrincipal User user) { //a anotação retorna o user logado
 //
-//        //User userLoged = (User) JwtUtil.getUserDetails(); //outra forma de retornar o user logado (nesse projeto)
+//        User userLoged = (User) JwtUtil.getUserDetails(); //outra forma de retornar o user logado (nesse projeto)
 //
 //        return user;
 //    }
