@@ -115,7 +115,7 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, getSerie(location).getStatusCode());
     }
     @Test
-    public void updateEspera200OkE404NotFound() { // TODO: Rever na orientação
+    public void updateEspera200OkE404NotFound() {
         // ARRANGE
         var SerieDTOPost = new SerieDTOPost(
                 "Série Teste Update",
