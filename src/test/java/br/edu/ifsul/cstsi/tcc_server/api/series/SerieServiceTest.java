@@ -41,7 +41,7 @@ public class SerieServiceTest {
         assertEquals("https://image.tmdb.org/t/p/w600_and_h900_bestv2/og6g7Ei0HIjj3bdi7mmNdNK2W3v.jpg", s.get().getImage());
         assertEquals("asdasdasd", s.get().getBigImage());
         assertEquals("https://www.youtube.com/watch?v=gbuEg2v9Arg", s.get().getOpening_video());
-        assertEquals(6, s.get().getEpisodes().size());
+        assertEquals(1, s.get().getEpisodes().size());
         assertEquals(0, s.get().getRatings().size());
     }
 

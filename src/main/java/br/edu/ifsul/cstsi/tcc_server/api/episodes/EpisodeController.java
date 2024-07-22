@@ -15,6 +15,12 @@ public class EpisodeController {
     @Autowired
     private EpisodeService service;
 
+    @GetMapping("{id}")
+    public ResponseEntity<Episode> getEpisodeById(@PathVariable("id") Long id) {
+        var ep = service.getEpisodeById(id);
+        return ep != null ? ResponseEntity.ok().body(ep) : ResponseEntity.notFound().build();
+    }
+
     @PostMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<String> insert (@RequestBody Episode episode) {
@@ -32,7 +38,7 @@ public class EpisodeController {
                 ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("{id}")
     public ResponseEntity<String> delete(@PathVariable("id") Long id) {
         return service.delete(id) ?
                 ResponseEntity.ok().build() :

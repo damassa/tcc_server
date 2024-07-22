@@ -15,7 +15,6 @@ import java.util.List;
 @Table(name = "series")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"user"})
@@ -51,6 +50,19 @@ public class Serie { // TODO: Criar DTO
         this.image = image;
         this.bigImage = bigImage;
         this.opening_video = opening_video;
+    }
+
+    @Override
+    public String toString() {
+        return "Serie{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", plot='" + plot + '\'' +
+                ", year=" + year +
+                ", image='" + image + '\'' +
+                ", bigImage='" + bigImage + '\'' +
+                ", opening_video='" + opening_video + '\'' +
+                '}';
     }
 
     public static Serie create(Serie s) {

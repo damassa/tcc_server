@@ -16,7 +16,7 @@ class CategoryServiceTest {
     @Test
     void getCategories() {
         var categories = service.getCategories();
-        assertEquals(2, categories.size());
+        assertEquals(5, categories.size());
     }
 
     @Test

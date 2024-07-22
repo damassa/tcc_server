@@ -11,8 +11,14 @@ public class EpisodeService {
     @Autowired
     private EpisodeRepository rep;
 
+    public Episode getEpisodeById(Long id){
+        return rep.findById(id).orElse(null);
+    }
+
     public Episode insert(Episode episode) {
         Assert.isNull(episode.getId(), "Não foi possível inserir o registro.");
+        System.out.println("Imprimindo na service");
+        System.out.println(episode);
         return rep.save(episode);
     }
 

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,8 +24,12 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
     @Autowired
     private EpisodeRepository episodeRepository;
 
+    private ResponseEntity<Episode> getEpisode(String url) {
+        return get(url, Episode.class);
+    }
+
     @Test
-    public void insert() { // TODO: Revisar sexta
+    public void insert() { // PASSOU
         // ARRANGE
         var episode = new Episode();
         episode.setName("Episódio Teste Insert");
@@ -40,16 +45,14 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
 
         // ARRANGE
         var location = response.getHeaders().get("location").get(0);
-        Long id = episode.getId();
-        var e = episodeRepository.findById(id).get();
-        assertNotNull(e);
-        assertEquals("Episódio Teste Insert", e.getName());
-        assertEquals(21, e.getDuration());
+        var newEp = getEpisode(location).getBody();
+        assertNotNull(newEp);
+        assertEquals("Episódio Teste Insert", newEp.getName());
+        assertEquals(21, newEp.getDuration());
+        delete(location, null);
 
-        episodeService.delete(id);
-        if(episodeRepository.findById(id).isPresent()) {
-            fail("O episódio foi excluído.");
-        }
+        // ASSERT
+        assertEquals(HttpStatus.NOT_FOUND, getEpisode(location).getStatusCode());
     }
 
     @Test

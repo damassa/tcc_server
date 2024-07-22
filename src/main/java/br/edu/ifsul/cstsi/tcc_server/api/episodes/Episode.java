@@ -30,4 +30,14 @@ public class Episode {
 
     @OneToMany(mappedBy = "episode", fetch = FetchType.EAGER)
     private List<History> histories;
+
+    @Override
+    public String toString() {
+        return "Episode{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", duration=" + duration +
+                ", serie=" + serie +
+                '}';
+    }
 }
