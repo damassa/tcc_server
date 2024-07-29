@@ -22,8 +22,6 @@ class HistoryServiceTest {
     @Autowired
     private HistoryRepository rep;
     @Autowired
-    private EpisodeService episodeService;
-    @Autowired
     private UserRepository userRepository;
     @Autowired
     private EpisodeRepository episodeRep;

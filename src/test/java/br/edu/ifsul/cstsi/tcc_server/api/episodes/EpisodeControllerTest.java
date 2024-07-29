@@ -65,7 +65,6 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
 
         // ARRANGE
         var location = response.getHeaders().get("location").get(0);
-        System.out.println(location);
         var newEp = getEpisode(location).getBody();
         assertNotNull(newEp);
         assertEquals("Episódio Teste Update", newEp.getName());

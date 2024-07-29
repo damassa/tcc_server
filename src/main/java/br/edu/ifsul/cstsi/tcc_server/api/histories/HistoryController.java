@@ -10,7 +10,7 @@ import java.sql.Time;
 
 @RestController
 @RequestMapping("/api/v1/histories")
-public class HistoryController { //TODO: Revisar com professor
+public class HistoryController {
     @Autowired
     private HistoryService service;
 
@@ -21,7 +21,7 @@ public class HistoryController { //TODO: Revisar com professor
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping
+    @PutMapping("{id}")
     public ResponseEntity<History> update(@RequestBody History history) {
         History h = service.update(history);
         return h != null ?
@@ -29,7 +29,7 @@ public class HistoryController { //TODO: Revisar com professor
                 ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("{id}")
     public ResponseEntity<Time> delete(@RequestBody HistoryKey hId) {
         return service.delete(hId) ?
                 ResponseEntity.ok().build() :
