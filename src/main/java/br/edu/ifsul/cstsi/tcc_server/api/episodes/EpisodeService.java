@@ -17,8 +17,6 @@ public class EpisodeService {
 
     public Episode insert(Episode episode) {
         Assert.isNull(episode.getId(), "Não foi possível inserir o registro.");
-        System.out.println("Imprimindo na service");
-        System.out.println(episode);
         return rep.save(episode);
     }
 
@@ -29,7 +27,7 @@ public class EpisodeService {
             Episode db = optional.get();
 
             db.setName(episode.getName());
-            System.out.println("Episódio id " + db.getId());
+            db.setDuration(episode.getDuration());
             return rep.save(db);
         } else {
             return null;

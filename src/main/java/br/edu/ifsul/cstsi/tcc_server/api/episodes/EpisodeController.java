@@ -29,7 +29,7 @@ public class EpisodeController {
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping
+    @PutMapping("{id}")
     public ResponseEntity<Episode> update(@PathVariable("id") Long id, @Valid @RequestBody Episode episode) {
         episode.setId(id);
         Episode e = service.update(episode, id);

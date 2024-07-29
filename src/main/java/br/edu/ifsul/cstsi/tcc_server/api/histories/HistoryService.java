@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.histories;
 
+import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,10 @@ import java.util.Optional;
 public class HistoryService {//TODO: Revisar com professor
     @Autowired
     private HistoryRepository rep;
+
+    public History getHistoryById(Long id){
+        return rep.findById(id).orElse(null);
+    }
 
     public History insert (History history) {
         Assert.notNull(history.getId(), "Não foi possível inserir o registro.");

@@ -2,7 +2,6 @@ package br.edu.ifsul.cstsi.tcc_server.api.episodes;
 
 import br.edu.ifsul.cstsi.tcc_server.BaseAPIIntegrationTest;
 import br.edu.ifsul.cstsi.tcc_server.TccServerApplication;
-import br.edu.ifsul.cstsi.tcc_server.api.series.SerieRepository;
 import br.edu.ifsul.cstsi.tcc_server.api.series.SerieService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EpisodeControllerTest extends BaseAPIIntegrationTest {
     @Autowired
     private SerieService serieService;
-    @Autowired
-    private SerieRepository serieRepository;
-    @Autowired
-    private EpisodeService episodeService;
-    @Autowired
-    private EpisodeRepository episodeRepository;
 
     private ResponseEntity<Episode> getEpisode(String url) {
         return get(url, Episode.class);
@@ -56,21 +49,62 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
     }
 
     @Test
-    public void update() {
+    public void update() { // PASSOU
         // ARRANGE
         var episode = new Episode();
         episode.setName("Episódio Teste Update");
-        episode.setDuration(21);
+        episode.setDuration(22);
         episode.setSerie(serieService.getSerieById(1L).get());
+        episode.setHistories(null);
+
+        // ACT
+        var response = post("/api/v1/episodes", episode, null);
+
+        // ASSERT
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        // ARRANGE
+        var location = response.getHeaders().get("location").get(0);
+        System.out.println(location);
+        var newEp = getEpisode(location).getBody();
+        assertNotNull(newEp);
+        assertEquals("Episódio Teste Update", newEp.getName());
+        assertEquals(22, newEp.getDuration());
+
+        var epModificado = new Episode();
+        epModificado.setName("Episódio Update Modificado");
+        epModificado.setDuration(23);
+        epModificado.setSerie(serieService.getSerieById(1L).get());
+        epModificado.setHistories(null);
+
+        var responsePUT = put(location, epModificado, Episode.class);
+        System.out.println(responsePUT);
+
+        assertEquals(HttpStatus.OK, responsePUT.getStatusCode());
+        assertEquals("Episódio Update Modificado", responsePUT.getBody().getName());
+        assertEquals(23, responsePUT.getBody().getDuration());
+
+        delete(location, null);
+
+        assertEquals(HttpStatus.NOT_FOUND, getEpisode(location).getStatusCode());
+    }
+
+    @Test
+    void delete() { // PASSOU
+        var episode = new Episode();
+        episode.setName("Episódio Teste Delete");
+        episode.setDuration(25);
         episode.setHistories(null);
 
         var response = post("/api/v1/episodes", episode, null);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         var location = response.getHeaders().get("location").get(0);
-        Long id = episode.getId();
-    }
+        var newEp = getEpisode(location).getBody();
+        assertNotNull(newEp);
+        assertEquals("Episódio Teste Delete", newEp.getName());
 
-    @Test
-    void delete() {
+        var responseDelete = delete(location, null);
+        assertEquals(HttpStatus.OK, responseDelete.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, getEpisode(location).getStatusCode());
     }
 }
