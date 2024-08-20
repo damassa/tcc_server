@@ -5,6 +5,7 @@ import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.modelmapper.ModelMapper;
 
 import java.time.LocalTime;
 
@@ -16,18 +17,31 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"episode"})
 public class History { //Intuito da tabela é pegar o tempo do episódio assistido por um usuário
-    @EmbeddedId
-    HistoryKey id;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     @ManyToOne
-    @MapsId("episodeID")
     @JoinColumn(name = "episode_id")
     Episode episode;
 
     @ManyToOne
-    @MapsId("userID")
     @JoinColumn(name = "user_id")
     User user;
 
     private LocalTime pausedAt;
+
+    public static History create(HistoryDTOResponse h) {
+        var modelMapper = new ModelMapper();
+        return modelMapper.map(h, History.class);
+    }
+
+    @Override
+    public String toString() {
+        return "History{" +
+                "id=" + id +
+                ", episode=" + episode +
+                ", user=" + user +
+                ", pausedAt=" + pausedAt +
+                '}';
+    }
 }

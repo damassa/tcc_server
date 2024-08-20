@@ -28,7 +28,6 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
         episode.setName("Episódio Teste Insert");
         episode.setDuration(21);
         episode.setSerie(serieService.getSerieById(1L).get());
-        episode.setHistories(null);
 
         //ACT
         var response = post("/api/v1/episodes", episode, null);
@@ -55,7 +54,6 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
         episode.setName("Episódio Teste Update");
         episode.setDuration(22);
         episode.setSerie(serieService.getSerieById(1L).get());
-        episode.setHistories(null);
 
         // ACT
         var response = post("/api/v1/episodes", episode, null);
@@ -74,7 +72,6 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
         epModificado.setName("Episódio Update Modificado");
         epModificado.setDuration(23);
         epModificado.setSerie(serieService.getSerieById(1L).get());
-        epModificado.setHistories(null);
 
         var responsePUT = put(location, epModificado, Episode.class);
         System.out.println(responsePUT);
@@ -93,7 +90,6 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
         var episode = new Episode();
         episode.setName("Episódio Teste Delete");
         episode.setDuration(25);
-        episode.setHistories(null);
 
         var response = post("/api/v1/episodes", episode, null);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());

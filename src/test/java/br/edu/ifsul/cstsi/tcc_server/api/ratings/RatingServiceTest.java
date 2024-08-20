@@ -24,7 +24,7 @@ class RatingServiceTest {
     @Test
     void insert() {
         var rating = new Rating();
-        rating.setId(new RatingKey(1L,2L));
+        rating.setId(3L);
         rating.setComment("Comentário teste.");
         rating.setStars(5);
         rating.setSerie(serieService.getSerieById(1L).get());
@@ -32,16 +32,16 @@ class RatingServiceTest {
 
         var r = service.insert(rating);
         assertNotNull(r);
-        RatingKey id = r.getId();
+        Long id = r.getId();
         assertNotNull(id);
-        var rt = rep.findRatingById(id);
+        var rt = rep.findById(id);
         assertNotNull(rt);
 
         assertEquals("Comentário teste.", rt.get().getComment());
         assertEquals(5, rt.get().getStars());
 
         service.delete(id);
-        if (rep.findRatingById(id).isPresent()) {
+        if (rep.findById(id).isPresent()) {
             fail("A avaliação foi excluída.");
         }
 
@@ -51,7 +51,7 @@ class RatingServiceTest {
     void update() {
         //ARRANGE
         var rating = new Rating();
-        rating.setId(new RatingKey(1L,2L));
+        rating.setId(3L);
         rating.setComment("Comentário teste.");
         rating.setStars(5);
         rating.setSerie(serieService.getSerieById(1L).get());
@@ -74,7 +74,7 @@ class RatingServiceTest {
         assertEquals(4, r2.getStars());
 
         service.delete(r2.getId());
-        if (rep.findRatingById(r2.getId()).isPresent()) {
+        if (rep.findById(r2.getId()).isPresent()) {
             fail("A avaliação foi excluída.");
         }
     }
@@ -82,7 +82,7 @@ class RatingServiceTest {
     @Test
     void delete() {
         var rating = new Rating();
-        rating.setId(new RatingKey(1L,2L));
+        rating.setId(4L);
         rating.setComment("Comentário teste pra ser deletado.");
         rating.setStars(2);
         rating.setSerie(serieService.getSerieById(1L).get());
@@ -90,9 +90,9 @@ class RatingServiceTest {
 
         var r = service.insert(rating);
         assertNotNull(r);
-        RatingKey id = r.getId();
+        Long id = r.getId();
         assertNotNull(id);
-        var rt = rep.findRatingById(id);
+        var rt = rep.findById(id);
         assertNotNull(rt);
 
         assertEquals("Comentário teste pra ser deletado.", rt.get().getComment());
@@ -100,7 +100,7 @@ class RatingServiceTest {
 
         service.delete(id);
 
-        if (rep.findRatingById(id).isPresent()) {
+        if (rep.findById(id).isPresent()) {
             fail("A avaliação foi excluída.");
         }
     }

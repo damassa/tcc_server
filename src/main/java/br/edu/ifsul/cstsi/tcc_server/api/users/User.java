@@ -4,6 +4,7 @@ import br.edu.ifsul.cstsi.tcc_server.api.histories.History;
 import br.edu.ifsul.cstsi.tcc_server.api.ratings.Rating;
 import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,14 +42,23 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user") // BUSCAR ISSO (ROLE_USER)
     List<Rating> ratings;
 
-    @OneToMany(mappedBy = "user") // NÃO BUSCAR ISSO
-    private List<History> histories;
-
     @ManyToMany(fetch = FetchType.EAGER) // BUSCAR ISSO (ROLE_ADMIN)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", isConfirmed=" + isConfirmed +
+                ", roles=" + roles +
+                '}';
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

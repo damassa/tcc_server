@@ -1,6 +1,5 @@
 package br.edu.ifsul.cstsi.tcc_server.api.histories;
 
-import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class HistoryService {//TODO: Revisar com professor
+public class HistoryService {
     @Autowired
     private HistoryRepository rep;
 
@@ -23,7 +22,7 @@ public class HistoryService {//TODO: Revisar com professor
 
     public History update(History history) {
         Assert.notNull(history.getId(), "Não foi possível atualizar o registro.");
-        Optional<History> optional = rep.findHistoryById(history.getId());
+        Optional<History> optional = rep.findById(history.getId());
         if(optional.isPresent()) {
             History db = optional.get();
             db.setPausedAt(history.getPausedAt());
@@ -33,8 +32,8 @@ public class HistoryService {//TODO: Revisar com professor
         }
     }
 
-    public boolean delete(HistoryKey id) {
-        Optional<History> optional = rep.findHistoryById(id);
+    public boolean delete(Long id) {
+        Optional<History> optional = rep.findById(id);
         if(optional.isPresent()) {
             rep.delete(optional.get());
             return true;

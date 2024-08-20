@@ -23,7 +23,6 @@ class EpisodeServiceTest {
         episode.setName("Episódio Teste");
         episode.setDuration(20);
         episode.setSerie(serieService.getSerieById(1L).get());
-        episode.setHistories(null);
 
         //ACT
         var e = service.insert(episode);

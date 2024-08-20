@@ -11,6 +11,10 @@ public class RatingService {
     @Autowired
     private RatingRepository rep;
 
+    public Rating getRatingById(Long id) {
+        return rep.findById(id).orElse(null);
+    }
+
     public Rating insert (Rating rating) {
         Assert.notNull(rating.getId(), "Não foi possível inserir o registro.");
         return rep.save(rating);
@@ -18,7 +22,7 @@ public class RatingService {
 
     public Rating update(Rating rating) {
         Assert.notNull(rating.getId(), "Não foi possível atualizar o registro.");
-        Optional<Rating> optional = rep.findRatingById(rating.getId());
+        Optional<Rating> optional = rep.findById(rating.getId());
         if(optional.isPresent()) {
             Rating db = optional.get();
             db.setComment(rating.getComment());
@@ -29,8 +33,8 @@ public class RatingService {
         }
     }
 
-    public boolean delete(RatingKey id) {
-        Optional<Rating> optional = rep.findRatingById(id);
+    public boolean delete(Long id) {
+        Optional<Rating> optional = rep.findById(id);
         if(optional.isPresent()) {
             rep.delete(optional.get());
             return true;

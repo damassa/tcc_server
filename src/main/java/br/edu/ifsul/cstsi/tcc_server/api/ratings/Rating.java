@@ -5,6 +5,7 @@ import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import org.modelmapper.ModelMapper;
 
 
 @Entity(name = "rating")
@@ -15,18 +16,32 @@ import lombok.*;
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"serie", "user"})
 public class Rating {
-    @EmbeddedId
-    RatingKey id;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     @ManyToOne
-    @MapsId("serieID")
     @JoinColumn(name = "serie_id")
     Serie serie;
 
     @ManyToOne
-    @MapsId("userID")
     @JoinColumn(name = "user_id")
     User user;
     private String comment;
     private int stars;
+
+    public static Rating create(RatingDTOResponse r) {
+        var modelMapper = new ModelMapper();
+        return modelMapper.map(r, Rating.class);
+    }
+
+    @Override
+    public String toString() {
+        return "Rating{" +
+                "id=" + id +
+                ", serie=" + serie +
+                ", user=" + user +
+                ", comment='" + comment + '\'' +
+                ", stars=" + stars +
+                '}';
+    }
 }

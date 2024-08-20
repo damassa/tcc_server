@@ -28,16 +28,12 @@ public class Episode {
     @JoinColumn(name = "series_id", referencedColumnName = "id")
     private Serie serie; //Vários episódios são de apenas 1 série
 
-    @OneToMany(mappedBy = "episode", fetch = FetchType.EAGER)
-    private List<History> histories;
-
     @Override
     public String toString() {
         return "Episode{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", duration=" + duration +
-                ", serie=" + serie +
                 '}';
     }
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class SerieService {
+public class SerieService { // TODO: Não tem que botar DTO aqui?
     @Autowired
     private SerieRepository rep;
 
