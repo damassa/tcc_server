@@ -9,9 +9,8 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 @Service //indica que essa classe deve ser adicionada ao Contexto do aplicativo como um Bean da camada de serviço de segurança JWT
 public class TokenService {
@@ -25,8 +24,8 @@ public class TokenService {
             return JWT.create()
                 .withIssuer("API World of Tokusatsu")
                 .withSubject(user.getUsername())
-                .withIssuedAt(LocalDateTime.now().toInstant(ZoneOffset.of("-03:00")))
-                .withExpiresAt(dataExpiracao())
+                .withIssuedAt(Instant.now())
+                .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
                 .sign(algorithm);
         } catch (JWTCreationException exception){
             // Invalid Signing configuration / Couldn't convert Claims.
@@ -47,9 +46,4 @@ public class TokenService {
             throw new TokenInvalidoException("Token JWT inválido ou expirado.");
         }
     }
-
-    private Instant dataExpiracao() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00")); //expira em 2 horas
-    }
-
 }
