@@ -35,7 +35,7 @@ public class UserService {
                 "Olá, " + user.getName()
                         +"\n\nAgora que você se cadastrou no app Aulas TADS, com o email " + user.getEmail()
                         + " é necessário confirmá-lo, clicando no link a a seguir:"
-                        + "\nhttp://localhost:8080/confirm-email?token=" + tokenConfirmEmail.getToken());
+                        + "\nhttps://tccserver-f1d0375900a5.herokuapp.com/confirm-email?token=" + tokenConfirmEmail.getToken());
 
         return savedUser;
     }
