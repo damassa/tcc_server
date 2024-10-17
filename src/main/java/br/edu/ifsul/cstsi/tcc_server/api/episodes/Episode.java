@@ -1,14 +1,10 @@
 package br.edu.ifsul.cstsi.tcc_server.api.episodes;
 
-import br.edu.ifsul.cstsi.tcc_server.api.histories.History;
 import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
-import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Collection;
-import java.util.List;
 
 @Entity(name = "Episode")
 @Table(name = "episodes")

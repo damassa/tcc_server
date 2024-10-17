@@ -7,7 +7,6 @@ import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.modelmapper.ModelMapper; //TODO: Revisar com o professor se realmente precisa da dependência
 
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"user"})
-public class Serie { // TODO: Criar DTO
+public class Serie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,7 +40,7 @@ public class Serie { // TODO: Criar DTO
     private List<Episode> episodes; //1 série possui vários episódios
 
     @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER) // BUSCAR ISSO
-    List<Rating> ratings;
+    private List<Rating> ratings;
 
     public Serie(String name, String plot, Integer year, String image, String bigImage, String opening_video) {
         this.name = name;
