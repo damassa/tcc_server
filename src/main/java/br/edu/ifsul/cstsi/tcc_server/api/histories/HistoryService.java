@@ -16,6 +16,8 @@ public class HistoryService {
     }
 
     public History insert (History history) {
+        System.out.println("DEBUG DOS GURI: ");
+        System.out.println(history);
         Assert.notNull(history.getId(), "Não foi possível inserir o registro.");
         return rep.save(history);
     }

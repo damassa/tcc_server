@@ -59,7 +59,7 @@ class HistoryServiceTest { // TODO: Rever sexta
         var h = service.insert(history);
         assertNotNull(h);
 
-        h.setId(4L);
+//        h.setId(3L);
         h.setPausedAt(LocalTime.parse("18:12"));
         h.setEpisode(episodeRep.findById(1L).get());
         h.setUser(userRepository.findById(2L).get());

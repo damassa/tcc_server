@@ -42,7 +42,7 @@ public class SerieServiceTest {
         assertEquals("asdasdasd", s.get().getBigImage());
         assertEquals("https://www.youtube.com/watch?v=gbuEg2v9Arg", s.get().getOpening_video());
         assertEquals(1, s.get().getEpisodes().size());
-        assertEquals(0, s.get().getRatings().size());
+        assertEquals(2, s.get().getRatings().size());
     }
 
     @Test
