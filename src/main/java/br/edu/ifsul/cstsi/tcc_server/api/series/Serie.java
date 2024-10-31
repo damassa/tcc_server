@@ -39,7 +39,7 @@ public class Serie {
     @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER) // BUSCAR ISSO
     private List<Episode> episodes; //1 série possui vários episódios
 
-    @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER) // BUSCAR ISSO
+    @OneToMany(mappedBy = "serie", fetch = FetchType.LAZY) // BUSCAR ISSO
     private List<Rating> ratings;
 
     public Serie(String name, String plot, Integer year, String image, String bigImage, String opening_video) {
