@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -67,7 +66,7 @@ public class UserController {
         var user = new User();
         user.setName(usuarioDTO.name());
         user.setEmail(usuarioDTO.email());
-        user.setPassword(usuarioDTO.senha());
+        user.setPassword(encoder.encode(usuarioDTO.senha()));
         user.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
         try {
             var u = service.insert(user);
