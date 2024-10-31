@@ -28,7 +28,7 @@ public class SerieController {
 
     //TODO: Rever sexta
     @GetMapping
-    public ResponseEntity<Page<SerieDTOResponse>> selectAll(@PageableDefault(size = 10, sort = "name") Pageable pagination) {
+    public ResponseEntity<Page<SerieDTOResponse>> selectAll(@PageableDefault(sort = "name") Pageable pagination) {
         return ResponseEntity.ok(service.getSeries(pagination).map(SerieDTOResponse::new));
     }
 
@@ -66,6 +66,7 @@ public class SerieController {
 
     //TODO: Rever sexta
     @PutMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<SerieDTOResponse> update(@PathVariable("id") Long id, @Valid @RequestBody SerieDTOPut serieDTOPut) {
         var s = service.update(new Serie(
                 serieDTOPut.name(),
@@ -82,6 +83,7 @@ public class SerieController {
 
     //TODO: Rever sexta
     @DeleteMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity delete(@PathVariable("id") Long id) {
         return service.delete(id) ?
                 ResponseEntity.ok().build() :
@@ -99,10 +101,5 @@ public class SerieController {
             errors.put(fieldName, errorMessage);
         });
         return errors;
-    }
-
-    //utilitário
-    private URI getUri(Long id) {
-        return ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
     }
 }

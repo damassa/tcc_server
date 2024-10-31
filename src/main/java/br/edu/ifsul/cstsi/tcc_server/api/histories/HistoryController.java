@@ -5,6 +5,7 @@ import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,7 @@ public class HistoryController { // TODO: Rever sexta
 
 
     @PostMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Time> insert (@RequestBody HistoryDTOResponse historyDTO) {
         History history = new History();
         history.setId(historyDTO.id());
@@ -49,12 +51,13 @@ public class HistoryController { // TODO: Rever sexta
     }
 
     @PutMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<HistoryDTOResponse> update(@PathVariable("id") Long id, @RequestBody HistoryDTOPut historyDTOPut) {
         History history = new History();
-        history.setId(historyDTOPut.id());
+        history.setId(id);
         history.setUser(userRep.findById(historyDTOPut.idUser()).get());
         history.setEpisode(episodeRepository.findById(historyDTOPut.idEpisode()).get());
-        history.setPausedAt(LocalTime.parse("16:42"));
+        history.setPausedAt(LocalTime.parse("00:00"));
 
         return history != null ? ResponseEntity.ok(new HistoryDTOResponse(history)) : ResponseEntity.notFound().build();
 //        History h = service.update(history);
@@ -64,6 +67,7 @@ public class HistoryController { // TODO: Rever sexta
     }
 
     @DeleteMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Time> delete(@PathVariable("id") Long id) {
         System.out.println(id);
         return service.delete(id) ?

@@ -5,6 +5,7 @@ import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class RatingController { // TODO: Rever sexta
     }
 
     @PostMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<String> insert (@RequestBody RatingDTOResponse ratingDTO) {
         Rating rating = new Rating();
         rating.setId(ratingDTO.id());
@@ -49,9 +51,10 @@ public class RatingController { // TODO: Rever sexta
     }
 
     @PutMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<RatingDTOResponse> update(@PathVariable("id") Long id, @RequestBody RatingDTOPut ratingDTOPut) {
         Rating rating = new Rating();
-        rating.setId(ratingDTOPut.id());
+        rating.setId(id);
         rating.setUser(userRepository.findById(ratingDTOPut.idUser()).get());
         rating.setSerie(serieRepository.findById(ratingDTOPut.idSerie()).get());
         rating.setStars(ratingDTOPut.stars());
@@ -65,6 +68,7 @@ public class RatingController { // TODO: Rever sexta
     }
 
     @DeleteMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<String> delete(@PathVariable("id") Long id) {
         return service.delete(id) ?
                 ResponseEntity.ok().build() :

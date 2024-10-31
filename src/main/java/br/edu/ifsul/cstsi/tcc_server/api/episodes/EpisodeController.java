@@ -30,6 +30,7 @@ public class EpisodeController {
     }
 
     @PutMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Episode> update(@PathVariable("id") Long id, @Valid @RequestBody Episode episode) {
         episode.setId(id);
         Episode e = service.update(episode, id);
@@ -39,6 +40,7 @@ public class EpisodeController {
     }
 
     @DeleteMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<String> delete(@PathVariable("id") Long id) {
         return service.delete(id) ?
                 ResponseEntity.ok().build() :
