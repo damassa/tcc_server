@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.users;
 
+import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -13,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -49,6 +51,7 @@ import java.util.Map;
  */
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 //@RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService service;
@@ -86,6 +89,12 @@ public class UserController {
        return ResponseEntity.badRequest().build();
     }
 
+    @GetMapping(value = "/api/v1/users/{id}/favorites")
+    public ResponseEntity <List<Serie>> getUserById(@PathVariable Long id) {
+        var u = service.getFavoriteSeriesById(id);
+        return u.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(u);
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -109,7 +118,7 @@ public class UserController {
 //    @GetMapping("/info")
 //    public User userInfo(@AuthenticationPrincipal User user) { //a anotação retorna o user logado
 //
-//        User userLoged = (User) JwtUtil.getUserDetails(); //outra forma de retornar o user logado (nesse projeto)
+//        User userLogged = (User) JwtUtil.getUserDetails(); //outra forma de retornar o user logado (nesse projeto)
 //
 //        return user;
 //    }

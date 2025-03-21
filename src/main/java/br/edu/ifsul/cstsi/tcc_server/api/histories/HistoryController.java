@@ -19,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/histories")
+@CrossOrigin(origins = "http://localhost:3000")
 public class HistoryController { // TODO: Rever sexta
     @Autowired
     private HistoryService service;

@@ -36,7 +36,7 @@ public class Serie {
     @JoinColumn(name = "categories_id", referencedColumnName = "id")
     private Category category; //Nenhuma ou várias séries possuem apenas 1 categoria
 
-    @OneToMany(mappedBy = "serie", fetch = FetchType.EAGER) // BUSCAR ISSO
+    @OneToMany(mappedBy = "serie", fetch = FetchType.LAZY) // BUSCAR ISSO
     private List<Episode> episodes; //1 série possui vários episódios
 
     @OneToMany(mappedBy = "serie", fetch = FetchType.LAZY) // BUSCAR ISSO

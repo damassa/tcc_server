@@ -10,9 +10,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/categories")
+@CrossOrigin(origins = "http://localhost:3000")
 public class CategoryController {
     @Autowired
     private CategoryService service;

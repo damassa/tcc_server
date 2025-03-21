@@ -7,9 +7,10 @@ public record SerieDTOResponse(
         Integer year,
         String image,
         String bigImage,
-        String opening_video
+        String opening_video,
+        String categoryName
 ) {
     public SerieDTOResponse(Serie serie) {
-            this(serie.getId(), serie.getName(), serie.getPlot(), serie.getYear(), serie.getImage(), serie.getBigImage(), serie.getOpening_video());
+            this(serie.getId(), serie.getName(), serie.getPlot(), serie.getYear(), serie.getImage(), serie.getBigImage(), serie.getOpening_video(), serie.getCategory().getName());
     }
 }

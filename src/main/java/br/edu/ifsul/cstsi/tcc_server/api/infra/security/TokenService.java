@@ -25,7 +25,7 @@ public class TokenService {
                 .withIssuer("API World of Tokusatsu")
                 .withSubject(user.getUsername())
                 .withIssuedAt(Instant.now())
-                .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
+                .withExpiresAt(Instant.now().plus(Duration.ofDays(60)))
                 .sign(algorithm);
         } catch (JWTCreationException exception){
             // Invalid Signing configuration / Couldn't convert Claims.

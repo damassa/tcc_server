@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/episodes")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EpisodeController {
     @Autowired
     private EpisodeService service;
@@ -19,6 +21,12 @@ public class EpisodeController {
     public ResponseEntity<Episode> getEpisodeById(@PathVariable("id") Long id) {
         var ep = service.getEpisodeById(id);
         return ep != null ? ResponseEntity.ok().body(ep) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/serie/{id}")
+    public ResponseEntity<List<Episode>> getEpisodesBySerieId(@PathVariable("id") Long id) {
+        var episodes = service.getEpisodesBySerieId(id);
+        return episodes != null ? ResponseEntity.ok().body(episodes) : ResponseEntity.notFound().build();
     }
 
     @PostMapping

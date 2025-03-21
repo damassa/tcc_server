@@ -11,7 +11,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -22,6 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/series")
+@CrossOrigin(origins = "http://localhost:3000")
 public class SerieController {
     @Autowired
     private SerieService service;
@@ -39,6 +39,17 @@ public class SerieController {
         return s.map(serie -> ResponseEntity.ok(new SerieDTOResponse(serie))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/category/{id}")
+    public ResponseEntity<List<SerieDTOResponse>> selectSeriesByCategoryId(@PathVariable("id") Long id) {
+        var s = service.getSeriesByCategoryId(id);
+        return s.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(s.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/sorted")
+    public ResponseEntity<List<Serie>> getSeriesSorted(@RequestParam boolean asc) {
+        return ResponseEntity.ok(service.getSeriesOrderedByYear(asc));
+    }
+
     //TODO: Rever sexta
     @GetMapping("/name/{name}")
     public ResponseEntity<List<SerieDTOResponse>> selectByName(@PathVariable("name") String name) {
@@ -46,6 +57,12 @@ public class SerieController {
         return series.isEmpty() ?
         ResponseEntity.noContent().build() :
         ResponseEntity.ok(series.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
+    }
+
+    @PostMapping("/toggleFavorites")
+    public ResponseEntity addSerieToFavorites(@RequestBody FavoriteDTOPost favoriteDTOPost) {
+        service.toggleFavorite(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
+        return ResponseEntity.ok().build();
     }
 
     //TODO: Rever sexta

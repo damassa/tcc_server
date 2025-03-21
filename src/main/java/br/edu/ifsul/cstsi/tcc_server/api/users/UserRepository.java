@@ -2,6 +2,7 @@ package br.edu.ifsul.cstsi.tcc_server.api.users;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+
 /*
   A grande vantagem do Padrão Repository reside no fato de ele permitir montar consultas pelo padrão de nome do método
   (e, claro, de trazer o CRUD pronto, sem precisar escrever uma linha de código).
@@ -16,4 +17,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepository extends JpaRepository<User,Long> {
     Boolean existsByEmail(String email);
     User findByEmail(String email);
+
 }

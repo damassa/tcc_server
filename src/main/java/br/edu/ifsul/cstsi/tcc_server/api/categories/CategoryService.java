@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.categories;
 
+import br.edu.ifsul.cstsi.tcc_server.api.series.SerieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -8,6 +9,9 @@ import java.util.List;
 import java.util.Optional;
 @Service
 public class CategoryService {
+
+    @Autowired
+    private SerieRepository serieRepository;
     @Autowired
     private CategoryRepository rep;
 

@@ -1,9 +1,11 @@
 package br.edu.ifsul.cstsi.tcc_server.api.episodes;
 
+import br.edu.ifsul.cstsi.tcc_server.api.series.SerieRepository;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,6 +15,10 @@ public class EpisodeService {
 
     public Episode getEpisodeById(Long id){
         return rep.findById(id).orElse(null);
+    }
+
+    public List<Episode> getEpisodesBySerieId(Long id) {
+        return rep.findEpisodesBySerieId(id);
     }
 
     public Episode insert(Episode episode) {

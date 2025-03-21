@@ -1,5 +1,7 @@
 package br.edu.ifsul.cstsi.tcc_server.api.users;
 
+import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
+import br.edu.ifsul.cstsi.tcc_server.api.series.SerieRepository;
 import br.edu.ifsul.cstsi.tcc_server.api.services.mail.EmailService;
 import br.edu.ifsul.cstsi.tcc_server.api.users.validations.ValidationUserRegister;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ public class UserService {
 
     @Autowired
     private UserRepository rep;
+    @Autowired
+    private SerieRepository serieRepository;
     @Autowired
     private TokenConfirmEmailRepository tokenConfirmEmailRepository;
     @Autowired
@@ -53,5 +57,11 @@ public class UserService {
 
     public List<User> getUsers() {
         return rep.findAll();
+    }
+
+    public List<Serie> getFavoriteSeriesById(Long id) {
+        var f = serieRepository.getFavoritesById(id);
+        System.out.println(f);
+        return f;
     }
 }

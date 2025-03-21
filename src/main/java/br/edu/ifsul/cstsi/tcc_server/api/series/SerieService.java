@@ -3,13 +3,12 @@ package br.edu.ifsul.cstsi.tcc_server.api.series;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 @Service
 public class SerieService { // TODO: Não tem que botar DTO aqui?
     @Autowired
@@ -25,6 +24,19 @@ public class SerieService { // TODO: Não tem que botar DTO aqui?
 
     public List<Serie> getSeriesByName(String name) {
         return rep.findByName("%"+name+"%");
+    }
+
+    public List<Serie> getSeriesOrderedByYear(boolean asc) {
+        Sort sort = asc ? Sort.by("year").ascending() : Sort.by("year").descending();
+        return rep.findAll(sort);
+    }
+
+    public List<Serie> getSeriesByCategoryId(Long id) {
+        return rep.getSeriesByCategoryId(id);
+    }
+
+    public void toggleFavorite(Long id_serie, Long id_user) {
+        rep.insertFavorite(id_serie, id_user);
     }
 
     public Serie insert(Serie serie) {
