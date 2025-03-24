@@ -23,6 +23,8 @@ public class UserService {
     private List<ValidationUserRegister> validations;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private UserRepository userRepository;
 
     public User insert(User user) {
         Assert.isNull(user.getId(), "Não foi possível inserir o registro");
@@ -37,7 +39,7 @@ public class UserService {
                 user.getEmail(),
                 "Solicitação de cadastro no app Aulas TADS",
                 "Olá, " + user.getName()
-                        +"\n\nAgora que você se cadastrou no app Aulas TADS, com o email " + user.getEmail()
+                        +"\n\nAgora que você se cadastrou World of Tokusatsu, com o email " + user.getEmail()
                         + " é necessário confirmá-lo, clicando no link a a seguir:"
                         + "\nhttps://tccserver-f1d0375900a5.herokuapp.com/confirm-email?token=" + tokenConfirmEmail.getToken());
 
@@ -58,6 +60,11 @@ public class UserService {
     public List<User> getUsers() {
         return rep.findAll();
     }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
 
     public List<Serie> getFavoriteSeriesById(Long id) {
         var f = serieRepository.getFavoritesById(id);

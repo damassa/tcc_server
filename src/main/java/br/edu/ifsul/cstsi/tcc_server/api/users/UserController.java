@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -93,6 +94,27 @@ public class UserController {
     public ResponseEntity <List<Serie>> getUserById(@PathVariable Long id) {
         var u = service.getFavoriteSeriesById(id);
         return u.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(u);
+    }
+
+    @GetMapping(value = "/api/v1/users/me/favorites")
+    public ResponseEntity <List<Serie>> getFavoritesFromCurrentUser() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String email = auth.getName();
+        var currUser = service.getUserByEmail(email);
+
+        if (currUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        System.out.println(currUser);
+
+        var fav = service.getFavoriteSeriesById(currUser.getId());
+        System.out.println(fav);
+        return fav.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(fav);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
