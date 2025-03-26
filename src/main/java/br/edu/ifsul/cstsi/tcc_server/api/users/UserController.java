@@ -1,6 +1,7 @@
 package br.edu.ifsul.cstsi.tcc_server.api.users;
 
 import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
+import br.edu.ifsul.cstsi.tcc_server.api.series.SerieDTOResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -13,10 +14,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /*
     ### Algumas palavras sobre senhas (ao cadastrar um usuário você deve se preocupar com isso, questão de segurança)
@@ -97,8 +96,9 @@ public class UserController {
     }
 
     @GetMapping(value = "/api/v1/users/me/favorites")
-    public ResponseEntity <List<Serie>> getFavoritesFromCurrentUser() {
+    public ResponseEntity<List<SerieDTOResponse>> getFavoritesFromCurrentUser() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
+
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -110,11 +110,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        System.out.println(currUser);
-
-        var fav = service.getFavoriteSeriesById(currUser.getId());
-        System.out.println(fav);
-        return fav.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(fav);
+        try {
+            var fav = service.getFavoriteSeriesById(currUser.getId());
+            if (fav == null || fav.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(fav.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

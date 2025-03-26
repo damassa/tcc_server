@@ -68,7 +68,6 @@ public class UserService {
 
     public List<Serie> getFavoriteSeriesById(Long id) {
         var f = serieRepository.getFavoritesById(id);
-        System.out.println(f);
         return f;
     }
 }

@@ -19,6 +19,8 @@ public class Episode {
     private Long id;
     private String name;
     private int duration;
+    private String link;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "series_id", referencedColumnName = "id")
@@ -30,6 +32,7 @@ public class Episode {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", duration=" + duration +
+                ", link='" + link + '\'' +
                 '}';
     }
 }

@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.series;
 
+import br.edu.ifsul.cstsi.tcc_server.api.users.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
 public class SerieController {
     @Autowired
     private SerieService service;
+    @Autowired
+    private UserService userService;
 
     //TODO: Rever sexta
     @GetMapping
@@ -64,6 +68,7 @@ public class SerieController {
         service.toggleFavorite(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
         return ResponseEntity.ok().build();
     }
+
 
     //TODO: Rever sexta
     @PostMapping
