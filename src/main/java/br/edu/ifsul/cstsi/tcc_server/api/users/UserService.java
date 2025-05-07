@@ -4,7 +4,11 @@ import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
 import br.edu.ifsul.cstsi.tcc_server.api.series.SerieRepository;
 import br.edu.ifsul.cstsi.tcc_server.api.services.mail.EmailService;
 import br.edu.ifsul.cstsi.tcc_server.api.users.validations.ValidationUserRegister;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -25,6 +29,9 @@ public class UserService {
     private EmailService emailService;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User insert(User user) {
         Assert.isNull(user.getId(), "Não foi possível inserir o registro");
@@ -65,9 +72,22 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    @Transactional
+    public void updateUser(String email, UserUpdateDTO userUpdateDTO) {
+        User user = userRepository.findByEmail(email);
+
+        if(userUpdateDTO.newPassword() != null && !userUpdateDTO.newPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(userUpdateDTO.newPassword()));
+        }
+
+        if(userUpdateDTO.name() != null && !userUpdateDTO.name().isBlank()) {
+            user.setName(userUpdateDTO.name());
+        }
+        rep.save(user);
+    }
 
     public List<Serie> getFavoriteSeriesById(Long id) {
-        var f = serieRepository.getFavoritesById(id);
+        var f = serieRepository.getFavoritesByUserID(id);
         return f;
     }
 }

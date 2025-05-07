@@ -9,7 +9,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +29,13 @@ public class SerieController {
     @Autowired
     private UserService userService;
 
-    //TODO: Rever sexta
     @GetMapping
+    public ResponseEntity<List<SerieDTOResponse>> selectAllSeries() {
+        var s = service.getAllSeries();
+        return s.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(s.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/pageable")
     public ResponseEntity<Page<SerieDTOResponse>> selectAll(@PageableDefault(sort = "name") Pageable pagination) {
         return ResponseEntity.ok(service.getSeries(pagination).map(SerieDTOResponse::new));
     }
@@ -63,12 +67,25 @@ public class SerieController {
         ResponseEntity.ok(series.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
     }
 
-    @PostMapping("/toggleFavorites")
+    @PostMapping("/addToFavorites")
     public ResponseEntity addSerieToFavorites(@RequestBody FavoriteDTOPost favoriteDTOPost) {
+        System.out.println(favoriteDTOPost);
         service.toggleFavorite(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/removeFromFavorites")
+    public ResponseEntity removeFromFavorites(@RequestBody FavoriteDTOPost favoriteDTOPost) {
+        System.out.println(favoriteDTOPost);
+        service.removeFromFavorites(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/favorites/count")
+    public ResponseEntity<Integer> countFavoritesBySerieId(@RequestBody FavoriteDTOPost favoriteDTOPost) {
+        var count = service.getFavoritesBySerieId(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
+        return ResponseEntity.ok(count);
+    }
 
     //TODO: Rever sexta
     @PostMapping

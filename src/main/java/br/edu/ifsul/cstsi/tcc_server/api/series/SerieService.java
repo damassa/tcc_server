@@ -14,6 +14,10 @@ public class SerieService { // TODO: Não tem que botar DTO aqui?
     @Autowired
     private SerieRepository rep;
 
+    public List<Serie> getAllSeries() {
+        return rep.findAll();
+    }
+
     public Page<Serie> getSeries(Pageable pagination) {
         return rep.findAll(pagination);
     }
@@ -37,6 +41,14 @@ public class SerieService { // TODO: Não tem que botar DTO aqui?
 
     public void toggleFavorite(Long id_serie, Long id_user) {
         rep.insertFavorite(id_serie, id_user);
+    }
+    
+    public Integer getFavoritesBySerieId(Long id_serie, Long id_user) {
+        return rep.countSeriesByIds(id_serie, id_user);
+    }
+
+    public void removeFromFavorites(Long id_serie, Long id_user) {
+        rep.removeFromFavorites(id_serie, id_user);
     }
 
     public Serie insert(Serie serie) {

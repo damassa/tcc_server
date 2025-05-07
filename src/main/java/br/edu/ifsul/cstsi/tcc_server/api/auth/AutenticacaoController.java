@@ -38,7 +38,7 @@ public class AutenticacaoController {
 
         validations.forEach(v -> v.validate(data));
 
-        var authentication = manager.authenticate(authenticationDTO); //autentica o usuário (esse objeto contém o usuário e a senha)
+        var authentication = manager.authenticate(authenticationDTO); //autentica o usuário (esse objeto contém TUDO)
         var tokenJWT = tokenService.geraToken((User) authentication.getPrincipal()); //gera o token JWT para enviar na response
         return ResponseEntity.ok(new TokenJwtDTO(tokenJWT)); //envia a response com o token JWT
     }

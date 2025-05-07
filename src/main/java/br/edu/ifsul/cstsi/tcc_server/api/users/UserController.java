@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
     *Salt: Em vez de usar apenas a senha como entrada para a função hash, bytes aleatórios (conhecidos como salt) são
     gerados para a senha de cada usuário.
 
-    ## Detalhes sobre desempenho: Qual método de validação de senha utilizar?
+    ## Detalhes sobre desempenho: Qual méthodo de validação de senha utilizar?
     Como as funções unidirecionais adaptativas (que gera uma hash para salvar no banco de dados) consomem,
     intencionalmente, muitos recursos, a validação de um nome de usuário e uma senha para cada solicitação pode
     degradar significativamente o desempenho de um aplicativo. Não há nada que o Spring Security (ou qualquer outra
@@ -119,6 +119,28 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping(value = "/api/v1/users/me")
+    public ResponseEntity<User> getMe() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        var currUser = service.getUserByEmail(email);
+        System.out.println(currUser);
+
+        return currUser != null ? ResponseEntity.ok(currUser) : ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping(value = "/api/v1/users/me/edit")
+    public ResponseEntity<String> edit(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        try {
+            service.updateUser(email, userUpdateDTO);
+            return ResponseEntity.ok("User updated successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user");
         }
     }
 
