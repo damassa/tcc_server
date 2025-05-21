@@ -28,7 +28,7 @@ public class TokenConfirmEmail { //TODO: Rever sexta
 
     public TokenConfirmEmail(User user) {
         this.user = user;
-        createdAt = LocalDateTime.now();
-        token = UUID.randomUUID().toString();
+        this.createdAt = LocalDateTime.now();
+        this.token = UUID.randomUUID().toString();
     }
 }

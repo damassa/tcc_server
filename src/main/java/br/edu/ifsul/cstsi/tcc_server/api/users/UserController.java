@@ -57,7 +57,7 @@ public class UserController {
     private final UserService service;
     private final RoleRepository roleRepository;
 
-    public UserController (UserService service, RoleRepository roleRepository) {
+    public UserController(UserService service, RoleRepository roleRepository) {
         this.service = service;
         this.roleRepository = roleRepository;
     }
@@ -80,14 +80,19 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value="/confirm-email", method = {RequestMethod.GET, RequestMethod.POST})
-    public ResponseEntity<String> confirmEmail(@RequestParam("token")String confirmationToken) {
-        var isToken = service.confirmEmail(confirmationToken);
-        if(isToken) {
+@GetMapping(path="/confirm-email")
+public ResponseEntity<String> confirmEmail(@RequestParam("token") String confirmationToken) {
+    try {
+        boolean isConfirmed = service.confirmEmail(confirmationToken);
+        if(isConfirmed) {
             return ResponseEntity.ok("E-mail confirmado com sucesso!");
         }
-       return ResponseEntity.badRequest().build();
+        return ResponseEntity.badRequest().body("Token inválido ou expirado");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("Erro ao confirmar e-mail: " + e.getMessage());
     }
+}
 
     @GetMapping(value = "/api/v1/users/{id}/favorites")
     public ResponseEntity <List<Serie>> getUserById(@PathVariable Long id) {

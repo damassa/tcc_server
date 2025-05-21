@@ -4,4 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TokenConfirmEmailRepository extends JpaRepository<TokenConfirmEmail, Long> {
     TokenConfirmEmail findByToken(String token);
+
+    void deleteByUser(User user);
 }
