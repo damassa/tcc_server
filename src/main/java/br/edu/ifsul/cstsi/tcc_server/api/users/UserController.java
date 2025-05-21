@@ -80,59 +80,59 @@ public class UserController {
         }
     }
 
-@GetMapping(path="/confirm-email")
-public ResponseEntity<String> confirmEmail(@RequestParam("token") String confirmationToken) {
-    try {
-        boolean isConfirmed = service.confirmEmail(confirmationToken);
-        if(isConfirmed) {
-            return ResponseEntity.ok("E-mail confirmado com sucesso!");
+    @GetMapping(path = "/confirm-email")
+    public ResponseEntity<String> confirmEmail(@RequestParam("token") String confirmationToken) {
+        try {
+            boolean isConfirmed = service.confirmEmail(confirmationToken);
+            if (isConfirmed) {
+                return ResponseEntity.ok("E-mail confirmado com sucesso!");
+            }
+            return ResponseEntity.badRequest().body("Token inválido ou expirado");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao confirmar e-mail: " + e.getMessage());
         }
-        return ResponseEntity.badRequest().body("Token inválido ou expirado");
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body("Erro ao confirmar e-mail: " + e.getMessage());
     }
-}
 
     @GetMapping(value = "/api/v1/users/{id}/favorites")
-    public ResponseEntity <List<Serie>> getUserById(@PathVariable Long id) {
-        var u = service.getFavoriteSeriesById(id);
-        return u.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(u);
+    public ResponseEntity<List<SerieDTOResponse>> getFavoritesByUserId(@PathVariable Long id) {
+        System.out.println("ENTROU NA FUNÇÃO");
+        System.out.println(id);
+        var fav = service.getFavoriteSeriesById(id);
+        System.out.println(fav);
+        if (fav == null || fav.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(fav.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
+
     }
 
-    @GetMapping(value = "/api/v1/users/me/favorites")
-    public ResponseEntity<List<SerieDTOResponse>> getFavoritesFromCurrentUser() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        String email = auth.getName();
-        var currUser = service.getUserByEmail(email);
-
-        if (currUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        try {
-            var fav = service.getFavoriteSeriesById(currUser.getId());
-            if (fav == null || fav.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok(fav.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+//    @GetMapping(value = "/api/v1/users/me/favorites")
+//    public ResponseEntity<List<SerieDTOResponse>> getFavoritesFromCurrentUser() {
+//        var auth = SecurityContextHolder.getContext().getAuthentication();
+//
+//        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//
+//        String email = auth.getName();
+//        System.out.println(auth);
+//        System.out.println("Email: " + email);
+//        var currUser = service.getUserByEmail(email);
+//        System.out.println("Quem é?" + currUser);
+//
+//        if (currUser == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//
+//
+//    }
 
     @GetMapping(value = "/api/v1/users/me")
     public ResponseEntity<User> getMe() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
         var currUser = service.getUserByEmail(email);
-        System.out.println(currUser);
 
         return currUser != null ? ResponseEntity.ok(currUser) : ResponseEntity.notFound().build();
     }

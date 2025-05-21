@@ -20,7 +20,10 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
     @Query(value = "insert into tcc_server.favorites (serie_id, user_id) values(?1, ?2)", nativeQuery = true)
     void insertFavorite(Long id_serie, Long id_user);
 
-    @Query(value = "select s.* from favorites f inner join series s, users u where f.serie_id = s.id and f.user_id = u.id", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT s.*\n" +
+            "FROM favorites f\n" +
+            "INNER JOIN series s ON f.serie_id = s.id\n" +
+            "WHERE f.user_id = ?1\n", nativeQuery = true)
     List<Serie> getFavoritesByUserID(Long id);
 
     @Query(value = "delete from tcc_server.favorites where serie_id = ?1 and user_id = ?2", nativeQuery = true)
