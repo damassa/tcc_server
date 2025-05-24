@@ -37,11 +37,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //Configuração JWT Authentication
         http
-            .csrf(csrf -> csrf.disable()) //desabilita a proteção contra ataques Cross-site Request Forger, comum em conexões Stateless
+                .csrf(csrf -> csrf.disable()) //desabilita a proteção contra ataques Cross-site Request Forger, comum em conexões Stateless
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //sem sessão (desabilita o stateful)
             .authorizeHttpRequests(req -> {  //configurar a autorização
                 req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll(); //exceto, a rota de documentação (para doc em html no navegador; e para ferramentas automatizadas de geração de código)
                 req.requestMatchers(HttpMethod.POST, "/api/v1/login", "/api/v1/users/register").permitAll(); //exceto, a rota de login
+                req.requestMatchers(HttpMethod.POST, "/api/v1/users/forgot-password", "/api/v1/users/reset-password").permitAll();
                 req.requestMatchers(HttpMethod.GET, "/confirm-email").permitAll();
                 req.anyRequest().authenticated(); //demais rotas devem ser autenticadas
             })

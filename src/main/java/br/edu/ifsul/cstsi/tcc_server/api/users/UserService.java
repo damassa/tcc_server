@@ -12,7 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -92,6 +94,49 @@ public class UserService {
         log.info("E-mail confirmado com sucesso para: {}", user.getEmail());
         return true;
     }
+
+    @Transactional
+    public boolean requestPasswordReset(String email) {
+        User user = rep.findByEmail(email);
+        if (user == null) {
+            return false;
+        }
+
+        // Gerar token e definir expiração
+        user.setResetPasswordToken(UUID.randomUUID().toString());
+        user.setResetPasswordTokenExpiry(LocalDateTime.now().plusHours(24));
+        rep.save(user);
+
+        emailService.sendEmail(
+                email,
+                "Redefinição de Senha - World of Tokusatsu",
+                "Olá, " + user.getName() +
+                        "\n\nVocê solicitou a redefinição de sua senha. Para prosseguir, clique no link abaixo:" +
+                        "\n\nhttp://localhost:8080/reset-password?token=" + user.getResetPasswordToken() +
+                        "\n\nEste link é válido por 24 horas." +
+                        "\n\nSe você não solicitou esta redefinição, ignore este e-mail."
+        );
+        return true;
+    }
+
+    @Transactional
+    public boolean resetPassword(String token, String newPassword) {
+        User user = rep.findByResetPasswordToken(token);
+
+        if (user == null ||
+                user.getResetPasswordTokenExpiry() == null ||
+                LocalDateTime.now().isAfter(user.getResetPasswordTokenExpiry())) {
+            return false;
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetPasswordToken(null);
+        user.setResetPasswordTokenExpiry(null);
+        rep.save(user);
+
+        return true;
+    }
+
 
 //    public boolean resendConfirmationEmail (String email) {
 //        log.debug("Solicitação de reenvio de confirmação para: {}", email);

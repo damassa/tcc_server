@@ -1,6 +1,5 @@
 package br.edu.ifsul.cstsi.tcc_server.api.users;
 
-import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
 import br.edu.ifsul.cstsi.tcc_server.api.series.SerieDTOResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -96,8 +95,6 @@ public class UserController {
 
     @GetMapping(value = "/api/v1/users/{id}/favorites")
     public ResponseEntity<List<SerieDTOResponse>> getFavoritesByUserId(@PathVariable Long id) {
-        System.out.println("ENTROU NA FUNÇÃO");
-        System.out.println(id);
         var fav = service.getFavoriteSeriesById(id);
         System.out.println(fav);
         if (fav == null || fav.isEmpty()) {
@@ -106,6 +103,27 @@ public class UserController {
         return ResponseEntity.ok(fav.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
 
     }
+
+    @PostMapping("/api/v1/users/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+        boolean result = service.requestPasswordReset(email);
+        if (result) {
+            return ResponseEntity.ok("Se o e-mail existir em nossa base de dados, você receberá um link para redefinição de senha.");
+        }
+        return ResponseEntity.ok("Se o e-mail existir em nossa base de dados, você receberá um link para redefinição de senha.");
+    }
+
+    @PostMapping("/api/v1/users/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @RequestParam String token,
+            @RequestParam String newPassword) {
+        boolean result = service.resetPassword(token, newPassword);
+        if (result) {
+            return ResponseEntity.ok("Senha atualizada com sucesso!");
+        }
+        return ResponseEntity.badRequest().body("Token inválido ou expirado");
+    }
+
 
 //    @GetMapping(value = "/api/v1/users/me/favorites")
 //    public ResponseEntity<List<SerieDTOResponse>> getFavoritesFromCurrentUser() {

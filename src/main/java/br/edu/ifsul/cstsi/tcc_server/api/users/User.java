@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private boolean isConfirmed = false;
+    private String resetPasswordToken;
+    private LocalDateTime resetPasswordTokenExpiry;
 
     @ManyToMany(fetch = FetchType.EAGER) // BUSCAR ISSO
     @JoinTable(name = "favorites",
