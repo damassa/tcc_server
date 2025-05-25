@@ -6,6 +6,7 @@ import br.edu.ifsul.cstsi.tcc_server.api.services.mail.EmailService;
 import br.edu.ifsul.cstsi.tcc_server.api.users.validations.ValidationUserRegister;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -112,7 +113,7 @@ public class UserService {
                 "Redefinição de Senha - World of Tokusatsu",
                 "Olá, " + user.getName() +
                         "\n\nVocê solicitou a redefinição de sua senha. Para prosseguir, clique no link abaixo:" +
-                        "\n\nhttp://localhost:8080/reset-password?token=" + user.getResetPasswordToken() +
+                        "\n\nhttp://localhost:3000/reset-password?token=" + user.getResetPasswordToken() +
                         "\n\nEste link é válido por 24 horas." +
                         "\n\nSe você não solicitou esta redefinição, ignore este e-mail."
         );
@@ -161,23 +162,38 @@ public class UserService {
         return rep.findAll();
     }
 
+    public User getUserById(Long id) {
+        return rep.findById(id).orElse(null);
+    }
+
     public User getUserByEmail(String email) {
         return rep.findByEmail(email);
     }
 
+
     @Transactional
-    public void updateUser(String email, UserUpdateDTO userUpdateDTO) {
-        User user = rep.findByEmail(email);
-
-        if(userUpdateDTO.newPassword() != null && !userUpdateDTO.newPassword().isBlank()) {
-            user.setPassword(passwordEncoder.encode(userUpdateDTO.newPassword()));
+    public void updateUserById(UserUpdateDTO userEditDTO) {
+        User user = getUserById(userEditDTO.id());
+        if (user == null) {
+            throw new IllegalArgumentException("Usuário não encontrado");
         }
 
-        if(userUpdateDTO.name() != null && !userUpdateDTO.name().isBlank()) {
-            user.setName(userUpdateDTO.name());
+        if (userEditDTO.name() != null && !userEditDTO.name().trim().isEmpty()) {
+            user.setName(userEditDTO.name());
         }
+
+        if (userEditDTO.email() != null && !userEditDTO.email().trim().isEmpty()) {
+            // Verificar se o email já não está em uso por outro usuário
+            User existingUser = getUserByEmail(userEditDTO.email());
+            if (existingUser != null && !existingUser.getId().equals(user.getId())) {
+                throw new ValidationException("E-mail já está em uso");
+            }
+            user.setEmail(userEditDTO.email());
+        }
+
         rep.save(user);
     }
+
 
     public List<Serie> getFavoriteSeriesById(Long id) {
         var f = serieRepository.getFavoritesByUserID(id);

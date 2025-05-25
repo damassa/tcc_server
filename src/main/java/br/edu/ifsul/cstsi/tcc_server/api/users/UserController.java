@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 /*
     ### Algumas palavras sobre senhas (ao cadastrar um usuário você deve se preocupar com isso, questão de segurança)
@@ -104,12 +105,23 @@ public class UserController {
 
     }
 
+    @PatchMapping(value = "/api/v1/users/edit-user")
+    public ResponseEntity<String> editUser(@Valid @RequestBody UserUpdateDTO userEditDTO) {
+        try {
+            service.updateUserById(userEditDTO);
+            return ResponseEntity.ok("Usuário atualizado com sucesso.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao atualizar usuário: " + e.getMessage());
+        }
+    }
+
+
     @PostMapping("/api/v1/users/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
-        boolean result = service.requestPasswordReset(email);
-        if (result) {
-            return ResponseEntity.ok("Se o e-mail existir em nossa base de dados, você receberá um link para redefinição de senha.");
-        }
+        service.requestPasswordReset(email);
         return ResponseEntity.ok("Se o e-mail existir em nossa base de dados, você receberá um link para redefinição de senha.");
     }
 
@@ -146,26 +158,13 @@ public class UserController {
 //
 //    }
 
-    @GetMapping(value = "/api/v1/users/me")
-    public ResponseEntity<User> getMe() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        var currUser = service.getUserByEmail(email);
-
-        return currUser != null ? ResponseEntity.ok(currUser) : ResponseEntity.notFound().build();
+@GetMapping(value = "/api/v1/users/me")
+public ResponseEntity<UserResponseDTO> getMe(@AuthenticationPrincipal User user) {
+    if (user == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-
-    @PatchMapping(value = "/api/v1/users/me/edit")
-    public ResponseEntity<String> edit(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        try {
-            service.updateUser(email, userUpdateDTO);
-            return ResponseEntity.ok("User updated successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user");
-        }
-    }
+    return ResponseEntity.ok(new UserResponseDTO(user));
+}
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
