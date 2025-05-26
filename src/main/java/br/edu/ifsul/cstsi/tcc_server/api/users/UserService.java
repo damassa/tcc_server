@@ -6,10 +6,9 @@ import br.edu.ifsul.cstsi.tcc_server.api.services.mail.EmailService;
 import br.edu.ifsul.cstsi.tcc_server.api.users.validations.ValidationUserRegister;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -20,12 +19,17 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class UserService {
+    private final UserRepository rep;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+
+    public UserService(UserRepository rep) {
+        this.rep = rep;
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
+
     @Autowired
     private SerieRepository serieRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private UserRepository rep;
     @Autowired
     private TokenConfirmEmailRepository tokenConfirmEmailRepository;
     @Autowired
@@ -139,25 +143,6 @@ public class UserService {
     }
 
 
-//    public boolean resendConfirmationEmail (String email) {
-//        log.debug("Solicitação de reenvio de confirmação para: {}", email);
-//
-//        var user = rep.findByEmail(email);
-//        if(user == null || user.isConfirmed()) {
-//            log.warn("Não é possível reenviar e-mail: usuário não encontrado ou já confirmado.");
-//            return false;
-//        }
-//
-//        tokenConfirmEmailRepository.deleteByUser((user);
-//
-//        var newToken = new TokenConfirmEmail(user);
-//        tokenConfirmEmailRepository.save(newToken);
-//
-//        emailService.sendEmail(user, newToken.getToken(), "E-mail de confirmação reenviado.");
-//        log.info("E-mail de confirmação reenviado para: {}", user.getEmail());
-//        return true;
-//    }
-
     public List<User> getUsers() {
         return rep.findAll();
     }
@@ -172,23 +157,17 @@ public class UserService {
 
 
     @Transactional
-    public void updateUserById(UserUpdateDTO userEditDTO) {
-        User user = getUserById(userEditDTO.id());
-        if (user == null) {
-            throw new IllegalArgumentException("Usuário não encontrado");
+    public void updateUser(Long userId, UserUpdateDTO uDto) {
+        User user = rep.findById(userId).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+
+        if (uDto.getName() != null && !uDto.getName().trim().isEmpty()) {
+            user.setName(uDto.getName());
         }
 
-        if (userEditDTO.name() != null && !userEditDTO.name().trim().isEmpty()) {
-            user.setName(userEditDTO.name());
-        }
-
-        if (userEditDTO.email() != null && !userEditDTO.email().trim().isEmpty()) {
-            // Verificar se o email já não está em uso por outro usuário
-            User existingUser = getUserByEmail(userEditDTO.email());
-            if (existingUser != null && !existingUser.getId().equals(user.getId())) {
-                throw new ValidationException("E-mail já está em uso");
-            }
-            user.setEmail(userEditDTO.email());
+        if (uDto.getNewPassword() != null && !uDto.getNewPassword().trim().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(uDto.getNewPassword().trim());
+            user.setPassword(encodedPassword);
+            System.out.println("Senha atualizada para o usuário: " + user.getEmail());
         }
 
         rep.save(user);

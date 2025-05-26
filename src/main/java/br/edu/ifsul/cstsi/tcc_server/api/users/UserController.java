@@ -106,15 +106,18 @@ public class UserController {
     }
 
     @PatchMapping(value = "/api/v1/users/edit-user")
-    public ResponseEntity<String> editUser(@Valid @RequestBody UserUpdateDTO userEditDTO) {
+    public ResponseEntity<String> editUser(@Valid @RequestBody UserUpdateDTO uDto, @AuthenticationPrincipal User user) {
         try {
-            service.updateUserById(userEditDTO);
-            return ResponseEntity.ok("Usuário atualizado com sucesso.");
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não autenticado!");
+            }
+
+            service.updateUser(user.getId(), uDto);
+            return ResponseEntity.ok("Dados atualizados com sucesso!");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao atualizar usuário: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar dados: " + e.getMessage());
         }
     }
 
@@ -158,13 +161,23 @@ public class UserController {
 //
 //    }
 
-@GetMapping(value = "/api/v1/users/me")
-public ResponseEntity<UserResponseDTO> getMe(@AuthenticationPrincipal User user) {
-    if (user == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    @GetMapping(value = "/api/v1/users/me")
+    public ResponseEntity<UserResponseDTO> getMe(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            System.out.println("Nenhum usuário autenticado");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Imprimindo informações do usuário
+        System.out.println("Usuário logado:");
+        System.out.println("ID: " + user.getId());
+        System.out.println("Nome: " + user.getName());
+        System.out.println("Email: " + user.getEmail());
+        System.out.println("Roles: " + user.getRoles());
+
+        return ResponseEntity.ok(new UserResponseDTO(user));
     }
-    return ResponseEntity.ok(new UserResponseDTO(user));
-}
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
