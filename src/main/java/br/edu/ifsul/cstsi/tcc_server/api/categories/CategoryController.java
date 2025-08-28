@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/categories")
-@CrossOrigin(origins = "http://localhost:3000")
-public class CategoryController {
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+    public class CategoryController {
     @Autowired
     private CategoryService service;
 
@@ -43,8 +43,9 @@ public class CategoryController {
 
     @PostMapping
     @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<String> insert(@RequestBody Category category) {
-        Category c = service.insert(category);
+    public ResponseEntity<String> insert(@Valid @RequestBody CategoryDTOPost category) {
+        System.out.println(category);
+        Category c = service.insert(new Category(null, category.name(), null));
         URI location = getUri(c.getId());
         return ResponseEntity.created(location).build();
     }

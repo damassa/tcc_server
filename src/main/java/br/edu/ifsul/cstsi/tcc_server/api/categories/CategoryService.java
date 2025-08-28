@@ -20,7 +20,7 @@ public class CategoryService {
     }
 
     public Optional<Category> getCategoryById(Long id) {
-        return rep.findById(id);
+        return Optional.ofNullable(rep.findById(id).orElseThrow(() -> new RuntimeException("Categoria não encontrada")));
     }
 
     public List<Category> getCategoriesByName(String name) {

@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.episodes;
 
+import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
 import br.edu.ifsul.cstsi.tcc_server.api.series.SerieRepository;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,41 +11,66 @@ import java.util.Optional;
 
 @Service
 public class EpisodeService {
-    @Autowired
-    private EpisodeRepository rep;
+    private final EpisodeRepository rep;
+    private final SerieRepository serieRep;
 
-    public Episode getEpisodeById(Long id){
-        return rep.findById(id).orElse(null);
+    public EpisodeService (EpisodeRepository rep, SerieRepository serieRep) {
+        this.rep = rep;
+        this.serieRep = serieRep;
     }
 
-    public List<Episode> getEpisodesBySerieId(Long id) {
-        return rep.findEpisodesBySerieId(id);
+    public List<EpisodeDTOGet> getAll() {
+        return rep.findAll().stream().map(EpisodeDTOGet::new).toList();
     }
 
-    public Episode insert(Episode episode) {
-        Assert.isNull(episode.getId(), "Não foi possível inserir o registro.");
-        return rep.save(episode);
+    public EpisodeDTOGet getById(Long id) {
+        Episode episode = rep.findById(id).orElseThrow(() -> new RuntimeException("Episódio não encontrado"));
+        return new EpisodeDTOGet(episode);
     }
 
-    public Episode update(Episode episode, Long id) {
-        Assert.notNull(id, "Não foi possível atualizar o registro.");
-        Optional<Episode> optional = rep.findById(id);
-        if(optional.isPresent()) {
-            Episode db = optional.get();
+    public EpisodeDTOGet getEpisodeById(Long id){
+        return rep.findById(id).map(EpisodeDTOGet::new).orElse(null);
+    }
 
-            db.setName(episode.getName());
-            db.setDuration(episode.getDuration());
-            return rep.save(db);
-        } else {
-            return null;
-        }
+
+    public List<EpisodeDTOGet> getEpisodesBySerieId(Long serieId) {
+        return rep.findEpisodesBySerieId(serieId).stream()
+                .map(EpisodeDTOGet::new)
+                .toList();
+    }
+
+    public EpisodeDTOGet insert(EpisodeDTOPost dto) {
+        Serie serie = serieRep.findById(dto.serieId()).orElseThrow(() -> new RuntimeException("Série não encontrada"));
+
+        Episode episode = new Episode();
+        episode.setName(dto.name());
+        episode.setDuration(dto.duration());
+        episode.setLink(dto.link());
+        episode.setSerie(serie);
+
+        Episode saved = rep.save(episode);
+        return new EpisodeDTOGet(saved);
+    }
+
+    public EpisodeDTOGet update(EpisodeDTOPut dto, Long id) {
+        Episode episode = rep.findById(id).orElseThrow(() -> new RuntimeException("Episódio não encontrado"));
+
+        Serie serie = serieRep.findById(dto.serieId()).orElseThrow(() -> new RuntimeException("Série não encontrada"));
+
+        episode.setName(dto.name());
+        episode.setDuration(dto.duration());
+        episode.setLink(dto.link());
+        episode.setSerie(serie);
+
+        Episode updated = rep.save(episode);
+        return new EpisodeDTOGet(updated);
     }
 
     public boolean delete(Long id) {
-        Optional<Episode> optional = rep.findById(id);
-        if(optional.isPresent()) {
-            rep.deleteById(id);
-            return true;
-        } else return false;
+        return rep.findById(id).map(ep -> {
+           rep.delete(ep);
+           return true;
+        }).orElse(false);
     }
 }
+
