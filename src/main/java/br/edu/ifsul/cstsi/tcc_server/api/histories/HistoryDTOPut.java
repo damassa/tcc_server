@@ -12,7 +12,7 @@ public record HistoryDTOPut(
         @NotBlank
         Long idEpisode,
         @NotBlank
-        LocalTime pausedAt
+        Long pausedAt
 ) {
     public HistoryDTOPut(History history) {
         this(history.getId(), history.getUser().getId(), history.getEpisode().getId(), history.getPausedAt());

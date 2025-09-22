@@ -7,51 +7,56 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class CategoryService {
 
     @Autowired
     private SerieRepository serieRepository;
+
     @Autowired
     private CategoryRepository rep;
 
+    // Retorna todas as categorias (entidades)
     public List<Category> getCategories() {
         return rep.findAll();
     }
 
+    // Retorna categoria por ID
     public Optional<Category> getCategoryById(Long id) {
-        return Optional.ofNullable(rep.findById(id).orElseThrow(() -> new RuntimeException("Categoria não encontrada")));
+        return rep.findById(id);
     }
 
+    // Retorna lista filtrada por nome
     public List<Category> getCategoriesByName(String name) {
-        return rep.findByName("%"+name+"%");
+        return rep.findByName("%" + name + "%");
     }
 
-    public Category insert (Category category) {
+    // Inserção via entidade
+    public Category insert(Category category) {
         Assert.isNull(category.getId(), "Não foi possível inserir o registro.");
         return rep.save(category);
     }
 
+    // Atualização via entidade
     public Category update(Category category, Long id) {
         Assert.notNull(id, "Não foi possível atualizar o registro.");
         Optional<Category> optional = rep.findById(id);
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             Category db = optional.get();
             db.setName(category.getName());
-            System.out.println("Categoria id " + db.getId());
             return rep.save(db);
-        } else {
-            return null;
         }
+        return null;
     }
 
+    // Delete
     public boolean delete(Long id) {
         Optional<Category> optional = rep.findById(id);
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             rep.deleteById(id);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 }

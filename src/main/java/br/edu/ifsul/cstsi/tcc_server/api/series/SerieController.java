@@ -1,5 +1,8 @@
 package br.edu.ifsul.cstsi.tcc_server.api.series;
 
+import br.edu.ifsul.cstsi.tcc_server.api.categories.Category;
+import br.edu.ifsul.cstsi.tcc_server.api.categories.CategoryRepository;
+import br.edu.ifsul.cstsi.tcc_server.api.categories.CategoryService;
 import br.edu.ifsul.cstsi.tcc_server.api.users.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -22,68 +26,98 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/series")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 public class SerieController {
-    @Autowired
-    private SerieService service;
+    private final SerieService serieService;
+
+    public SerieController(SerieService serieService) {
+        this.serieService = serieService;
+    }
     @Autowired
     private UserService userService;
+    @Autowired
+    private CategoryRepository catRep;
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @GetMapping
     public ResponseEntity<List<SerieDTOResponse>> selectAllSeries() {
-        var s = service.getAllSeries();
-        return s.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(s.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
+        var series = serieService.getAllSeries(); // retorna List<SerieDTOResponse>
+        if (series.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(series);
     }
+
+
 
     @GetMapping("/pageable")
     public ResponseEntity<Page<SerieDTOResponse>> selectAll(@PageableDefault(sort = "name") Pageable pagination) {
-        return ResponseEntity.ok(service.getSeries(pagination).map(SerieDTOResponse::new));
+        return ResponseEntity.ok(
+                serieService.getSeries(pagination)
+                        .map(SerieDTOResponse::new)
+        );
     }
 
-    //TODO: Rever sexta
-    @GetMapping("{id}")
-    public ResponseEntity<SerieDTOResponse> selectById(@PathVariable("id") Long id) {
-        var s = service.getSerieById(id);
-        return s.map(serie -> ResponseEntity.ok(new SerieDTOResponse(serie))).orElseGet(() -> ResponseEntity.notFound().build());
+
+//    @GetMapping("{id}")
+//    public ResponseEntity<SerieDTOResponse> selectById(@PathVariable Long id) {
+//        return serieService.getSerieById(id)
+//                .map(SerieDTOResponse::new)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SerieDTOResponse> selectById(@PathVariable Long id) {
+        SerieDTOResponse serie = serieService.getSerieById(id);
+        return ResponseEntity.ok(serie);
     }
+
 
     @GetMapping("/category/{id}")
-    public ResponseEntity<List<SerieDTOResponse>> selectSeriesByCategoryId(@PathVariable("id") Long id) {
-        var s = service.getSeriesByCategoryId(id);
-        return s.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(s.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
+    public ResponseEntity<List<SerieDTOResponse>> selectSeriesByCategoryId(@PathVariable Long id) {
+        var series = serieService.getSeriesByCategoryId(id);
+        if (series.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(
+                series.stream().map(SerieDTOResponse::new).collect(Collectors.toList())
+        );
     }
+
 
     @GetMapping("/sorted")
-    public ResponseEntity<List<Serie>> getSeriesSorted(@RequestParam boolean asc) {
-        return ResponseEntity.ok(service.getSeriesOrderedByYear(asc));
+    public ResponseEntity<List<SerieDTOResponse>> getSeriesSorted(@RequestParam boolean asc) {
+        var series = serieService.getSeriesOrderedByYear(asc).stream().map(SerieDTOResponse::new).toList();
+        return ResponseEntity.ok(series);
     }
 
-    //TODO: Rever sexta
     @GetMapping("/name/{name}")
-    public ResponseEntity<List<SerieDTOResponse>> selectByName(@PathVariable("name") String name) {
-        var series = service.getSeriesByName(name);
-        return series.isEmpty() ?
-        ResponseEntity.noContent().build() :
-        ResponseEntity.ok(series.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
+    public ResponseEntity<List<SerieDTOResponse>> selectByName(@PathVariable String name) {
+        var series = serieService.getSeriesByName(name);
+        if (series.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(
+                series.stream().map(SerieDTOResponse::new).collect(Collectors.toList())
+        );
     }
+
 
     @PostMapping("/addToFavorites")
     public ResponseEntity addSerieToFavorites(@RequestBody FavoriteDTOPost favoriteDTOPost) {
         System.out.println(favoriteDTOPost);
-        service.toggleFavorite(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
+        serieService.toggleFavorite(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/removeFromFavorites")
     public ResponseEntity removeFromFavorites(@RequestBody FavoriteDTOPost favoriteDTOPost) {
         System.out.println(favoriteDTOPost);
-        service.removeFromFavorites(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
+        serieService.removeFromFavorites(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/favorites/count")
     public ResponseEntity<Integer> countFavoritesBySerieId(@RequestBody FavoriteDTOPost favoriteDTOPost) {
-        var count = service.getFavoritesBySerieId(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
+        var count = serieService.getFavoritesBySerieId(favoriteDTOPost.serie_id(), favoriteDTOPost.user_id());
         return ResponseEntity.ok(count);
     }
 
@@ -91,40 +125,41 @@ public class SerieController {
     @PostMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<URI> insert(@RequestBody SerieDTOPost serieDTOPost, UriComponentsBuilder uriBuilder) {
-        var s = service.insert(new Serie(
-                serieDTOPost.name(),
-                serieDTOPost.plot(),
-                serieDTOPost.year(),
-                serieDTOPost.image(),
-                serieDTOPost.bigImage(),
-                serieDTOPost.opening_video()
-        ));
+        Serie s = serieService.insert(serieDTOPost);
+//        Category category = categoryService.getCategoryById(serieDTOPost.categoryId())
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Categoria não encontrada"));
+//
+//        Serie s = new Serie(
+//                serieDTOPost.name(),
+//                serieDTOPost.plot(),
+//                serieDTOPost.year(),
+//                serieDTOPost.image(),
+//                serieDTOPost.bigImage(),
+//                serieDTOPost.opening_video()
+//        );
+//        s.setCategory(category);
+//
+//        serieService.insert(s);
+
         var location = uriBuilder.path("api/v1/series/{id}").buildAndExpand(s.getId()).toUri();
         return ResponseEntity.created(location).build();
     }
 
     //TODO: Rever sexta
-    @PutMapping("{id}")
+    @PatchMapping("{id}")
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<SerieDTOResponse> update(@PathVariable("id") Long id, @Valid @RequestBody SerieDTOPut serieDTOPut) {
-        var s = service.update(new Serie(
-                serieDTOPut.name(),
-                serieDTOPut.plot(),
-                serieDTOPut.year(),
-                serieDTOPut.image(),
-                serieDTOPut.bigImage(),
-                serieDTOPut.opening_video()
-        ), id);
-        return s != null ?
-                ResponseEntity.ok(new SerieDTOResponse(s)) :
-                ResponseEntity.notFound().build();
+        SerieDTOResponse updated = serieService.update(id, serieDTOPut); // Já é SerieDTOResponse
+        return ResponseEntity.ok(updated); // <-- sem criar outro DTO
     }
+
+
 
     //TODO: Rever sexta
     @DeleteMapping("{id}")
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity delete(@PathVariable("id") Long id) {
-        return service.delete(id) ?
+        return serieService.delete(id) ?
                 ResponseEntity.ok().build() :
                 ResponseEntity.notFound().build();
     }

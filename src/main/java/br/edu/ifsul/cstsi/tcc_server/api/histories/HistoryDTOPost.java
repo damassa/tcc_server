@@ -1,18 +1,19 @@
 package br.edu.ifsul.cstsi.tcc_server.api.histories;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalTime;
 
 public record HistoryDTOPost(
-        @NotBlank
+        @NotNull
         Long id,
-        @NotBlank
+        @NotNull
         Long idUser,
-        @NotBlank
+        @NotNull
         Long idEpisode,
-        @NotBlank
-        LocalTime pausedAt
+        @NotNull
+        Long pausedAt
 ) {
     public HistoryDTOPost(History history) {
         this(history.getId(), history.getUser().getId(), history.getEpisode().getId(), history.getPausedAt());

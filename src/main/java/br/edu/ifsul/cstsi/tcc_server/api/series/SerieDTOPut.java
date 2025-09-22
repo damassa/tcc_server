@@ -15,9 +15,11 @@ public record SerieDTOPut(
         @NotBlank(message = "Imagem poster não pode ser vazia")
         String bigImage,
         @NotBlank(message = "Abertura não pode ser vazia")
-        String opening_video
+        String opening_video,
+        @NotNull(message = "Categoria não pode ser vazia")
+        Long categoryId
 ) {
     public SerieDTOPut(Serie serie) {
-        this(serie.getName(), serie.getPlot(), serie.getYear(), serie.getImage(), serie.getBigImage(), serie.getOpening_video());
+        this(serie.getName(), serie.getPlot(), serie.getYear(), serie.getImage(), serie.getBigImage(), serie.getOpening_video(), serie.getCategory().getId());
     }
 }

@@ -24,10 +24,13 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
     @Test
     public void insert() { // PASSOU
         // ARRANGE
-        var episode = new Episode();
-        episode.setName("Episódio Teste Insert");
-        episode.setDuration(21);
-        episode.setSerie(serieService.getSerieById(1L).get());
+        var episode = new EpisodeDTOPost(
+            "Episódio Teste Insert",
+            21,
+            "link teste",
+                1L
+        );
+
 
         //ACT
         var response = post("/api/v1/episodes", episode, null);
@@ -50,10 +53,16 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
     @Test
     public void update() { // PASSOU
         // ARRANGE
-        var episode = new Episode();
-        episode.setName("Episódio Teste Update");
-        episode.setDuration(22);
-        episode.setSerie(serieService.getSerieById(1L).get());
+        var serie = serieService.getSerieById(1L);
+        var episode = new EpisodeDTOPost(
+                "Episódio Teste Update",
+                22,
+                "Link lalala",
+                serie.id()
+        );
+//        episode.setName("Episódio Teste Update");
+//        episode.setDuration(22);
+//        episode.setSerie(serieService.getSerieById(1L).get());
 
         // ACT
         var response = post("/api/v1/episodes", episode, null);
@@ -67,18 +76,25 @@ public class EpisodeControllerTest extends BaseAPIIntegrationTest {
         assertNotNull(newEp);
         assertEquals("Episódio Teste Update", newEp.getName());
         assertEquals(22, newEp.getDuration());
+        assertEquals("Link lalala", newEp.getLink());
 
-        var epModificado = new Episode();
-        epModificado.setName("Episódio Update Modificado");
-        epModificado.setDuration(23);
-        epModificado.setSerie(serieService.getSerieById(1L).get());
+        var epModificado = new EpisodeDTOPut(
+                "Episódio Update Modificado",
+                23,
+                "Link Modificado lalala",
+                serie.id()
+        );
+//        var epModificado = new Episode();
+//        epModificado.setName("Episódio Update Modificado");
+//        epModificado.setDuration(23);
+//        epModificado.setSerie(serieService.getSerieById(1L).get());
 
-        var responsePUT = put(location, epModificado, Episode.class);
+        var responsePUT = put(location, epModificado, EpisodeDTOGet.class);
         System.out.println(responsePUT);
 
         assertEquals(HttpStatus.OK, responsePUT.getStatusCode());
-        assertEquals("Episódio Update Modificado", responsePUT.getBody().getName());
-        assertEquals(23, responsePUT.getBody().getDuration());
+        assertEquals("Episódio Update Modificado", responsePUT.getBody().name());
+        assertEquals(23, responsePUT.getBody().duration());
 
         delete(location, null);
 

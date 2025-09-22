@@ -90,7 +90,8 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
                 2025,
                 "asdasdasd Insert",
                 "asdasdasdas Insert",
-                "https://www.youtube.com/watch?v=Z0DO0XyS8Ko"
+                "https://www.youtube.com/watch?v=Z0DO0XyS8Ko",
+                1L
         );
 
         // ACT
@@ -123,7 +124,8 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
                 2025,
                 "asdasdasd Update",
                 "asdasdasdas Update",
-                "https://www.youtube.com/watch?v=Z0DO0XyS8Ko"
+                "https://www.youtube.com/watch?v=Z0DO0XyS8Ko",
+                1L
         );
 
         var responsePost = post("/api/v1/series", SerieDTOPost, null);
@@ -144,7 +146,8 @@ public class SerieControllerTest extends BaseAPIIntegrationTest {
                 2024,
                 "asdasdasdA",
                 "asdasdasdasA",
-                "https://www.youtube.com/watch?v=aRsWk4JZa5k"
+                "https://www.youtube.com/watch?v=aRsWk4JZa5k",
+                2L
         );
 
         // ACT

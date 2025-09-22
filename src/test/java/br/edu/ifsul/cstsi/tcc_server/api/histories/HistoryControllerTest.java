@@ -22,11 +22,11 @@ public class HistoryControllerTest extends BaseAPIIntegrationTest { // PASSOU
 
     @Test
     public void insert() {
-        var historyDTOPost = new HistoryDTOResponse(
+        var historyDTOPost = new HistoryDTOPost(
                 1L,
               2L,
               1L,
-                LocalTime.parse("16:52")
+                1012L
         );
 
         var response = post("/api/v1/histories", historyDTOPost, null);
@@ -38,7 +38,7 @@ public class HistoryControllerTest extends BaseAPIIntegrationTest { // PASSOU
         var newHistory = getHistory(location).getBody();
         System.out.println(newHistory);
         assertNotNull(newHistory);
-        assertEquals(LocalTime.parse("16:42"), newHistory.getPausedAt());
+        assertEquals(1012L, newHistory.getPausedAt());
         delete(location, null);
     }
 
@@ -48,7 +48,7 @@ public class HistoryControllerTest extends BaseAPIIntegrationTest { // PASSOU
                 1L,
                 2L,
                 1L,
-                LocalTime.parse("16:52")
+                1012L
         );
 
         var response = post("/api/v1/histories", historyDTOPost, null);
@@ -58,18 +58,18 @@ public class HistoryControllerTest extends BaseAPIIntegrationTest { // PASSOU
         var newHistory = getHistory(location).getBody();
         System.out.println(newHistory);
         assertNotNull(newHistory);
-        assertEquals(LocalTime.parse("16:42"), newHistory.getPausedAt());
+        assertEquals(1012L, newHistory.getPausedAt());
 
         var historyDTOPut = new HistoryDTOPut(
                 1L,
                 2L,
                 1L,
-                LocalTime.parse("16:52")
+                1012L
         );
 
         var historyPUT = put(location, historyDTOPut, HistoryDTOResponse.class);
         assertEquals(HttpStatus.OK, historyPUT.getStatusCode());
-        assertEquals(LocalTime.parse("16:42", DateTimeFormatter.ofPattern("HH:mm")), historyPUT.getBody().pausedAt());
+        assertEquals(1042L, historyPUT.getBody().pausedAt());
 
         delete(location, null);
 
@@ -78,11 +78,11 @@ public class HistoryControllerTest extends BaseAPIIntegrationTest { // PASSOU
 
     @Test
     public void delete() {
-        var historyDTOPost = new HistoryDTOResponse(
+        var historyDTOPost = new HistoryDTOPost(
                 1L,
                 2L,
                 1L,
-                LocalTime.parse("16:52", DateTimeFormatter.ofPattern("HH:mm"))
+                1012L
         );
 
         var response = post("/api/v1/histories", historyDTOPost, null);
@@ -94,7 +94,7 @@ public class HistoryControllerTest extends BaseAPIIntegrationTest { // PASSOU
         var newHistory = getHistory(location).getBody();
         System.out.println(newHistory);
         assertNotNull(newHistory);
-        assertEquals(LocalTime.parse("16:42", DateTimeFormatter.ofPattern("HH:mm")), newHistory.getPausedAt());
+        assertEquals(1012L, newHistory.getPausedAt());
         System.out.println(location);
 
         var responseDelete = delete(location, null);

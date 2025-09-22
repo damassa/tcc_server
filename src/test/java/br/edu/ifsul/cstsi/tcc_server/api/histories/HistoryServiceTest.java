@@ -1,84 +1,100 @@
 package br.edu.ifsul.cstsi.tcc_server.api.histories;
 
 import br.edu.ifsul.cstsi.tcc_server.TccServerApplication;
-import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
 import br.edu.ifsul.cstsi.tcc_server.api.episodes.EpisodeRepository;
-import br.edu.ifsul.cstsi.tcc_server.api.episodes.EpisodeService;
 import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalTime;
-
 import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest(classes = TccServerApplication.class)
 @ActiveProfiles("test")
-class HistoryServiceTest { // TODO: Rever sexta
+class HistoryServiceTest {
+
     @Autowired
     private HistoryService service;
+
     @Autowired
     private HistoryRepository rep;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private EpisodeRepository episodeRep;
+
+    // 🔧 Converte "HH:mm" para segundos
+    private Long toSeconds(String time) {
+        String[] parts = time.split(":");
+        int hours = Integer.parseInt(parts[0]);
+        int minutes = Integer.parseInt(parts[1]);
+        return (long) (hours * 3600 + minutes * 60);
+    }
+
+    // 🔧 Converte segundos para "HH:mm"
+    private String toTimeString(Long seconds) {
+        if (seconds == null) return null;
+        long hours = seconds / 3600;
+        long minutes = (seconds % 3600) / 60;
+        return String.format("%02d:%02d", hours, minutes);
+    }
+
     @Test
     void insert() {
         var history = new History();
-        history.setId(3L);
-        history.setUser(userRepository.findById(2L).get());
-        history.setEpisode(episodeRep.findById(1L).get());
-        history.setPausedAt(LocalTime.parse("15:23"));
+        history.setUser(userRepository.findById(2L).orElseThrow());
+        history.setEpisode(episodeRep.findById(1L).orElseThrow());
+        history.setPausedAt(toSeconds("15:23"));
 
         var h = service.insert(history);
         assertNotNull(h);
-        Long id = h.getId();
-        assertNotNull(id);
-        var hr = rep.findById(id);
-        assertNotNull(hr);
+        assertNotNull(h.getId());
 
-        assertEquals(LocalTime.parse("15:23"), hr.get().getPausedAt());
+        var hr = rep.findById(h.getId());
+        assertTrue(hr.isPresent(), "Histórico não encontrado no repositório");
+        assertEquals("15:23", toTimeString(hr.get().getPausedAt()));
 
-        service.delete(id);
-        if(rep.findById(id).isPresent()) {
-            fail("O histórico foi excluído.");
-        }
+        service.delete(h.getId());
+        assertFalse(rep.findById(h.getId()).isPresent(), "O histórico deveria ter sido excluído");
     }
 
     @Test
     void update() {
-        //ARRANGE
+        // Arrange
         var history = new History();
-        history.setId(3L);
-        history.setPausedAt(LocalTime.parse("19:24"));
-        history.setEpisode(episodeRep.findById(1L).get());
-        history.setUser(userRepository.findById(2L).get());
+        history.setPausedAt(toSeconds("19:24"));
+        history.setEpisode(episodeRep.findById(1L).orElseThrow());
+        history.setUser(userRepository.findById(2L).orElseThrow());
 
         var h = service.insert(history);
         assertNotNull(h);
 
-//        h.setId(3L);
-        h.setPausedAt(LocalTime.parse("18:12"));
-        h.setEpisode(episodeRep.findById(1L).get());
-        h.setUser(userRepository.findById(2L).get());
-
-        //ACT
+        // Act
+        h.setPausedAt(toSeconds("18:12"));
         var h2 = service.update(h);
 
-        //ASSERT
+        // Assert
         assertNotNull(h2);
-        assertEquals(LocalTime.parse("18:12"), h2.getPausedAt());
+        assertEquals("18:12", toTimeString(h2.getPausedAt()));
 
         service.delete(h2.getId());
-        if (rep.findById(h2.getId()).isPresent()) {
-            fail("O histórico foi excluído.");
-        }
+        assertFalse(rep.findById(h2.getId()).isPresent(), "O histórico deveria ter sido excluído");
     }
 
     @Test
     void delete() {
-        insert();
+        var history = new History();
+        history.setUser(userRepository.findById(2L).orElseThrow());
+        history.setEpisode(episodeRep.findById(1L).orElseThrow());
+        history.setPausedAt(toSeconds("10:10"));
+
+        var h = service.insert(history);
+        assertNotNull(h.getId());
+
+        service.delete(h.getId());
+        assertFalse(rep.findById(h.getId()).isPresent(), "O histórico deveria ter sido excluído");
     }
 }

@@ -35,14 +35,14 @@ public class SerieServiceTest {
 
         // ASSERT
         assertNotNull(s);
-        assertEquals("Himitsu Sentai Gorenger", s.get().getName());
-        assertEquals("The first super sentai heroes.", s.get().getPlot());
-        assertEquals(1975, s.get().getYear());
-        assertEquals("https://image.tmdb.org/t/p/w600_and_h900_bestv2/og6g7Ei0HIjj3bdi7mmNdNK2W3v.jpg", s.get().getImage());
-        assertEquals("asdasdasd", s.get().getBigImage());
-        assertEquals("https://www.youtube.com/watch?v=gbuEg2v9Arg", s.get().getOpening_video());
-        assertEquals(1, s.get().getEpisodes().size());
-        assertEquals(2, s.get().getRatings().size());
+        assertEquals("Himitsu Sentai Gorenger", s.name());
+        assertEquals("The first super sentai heroes.", s.plot());
+        assertEquals(1975, s.year());
+        assertEquals("https://image.tmdb.org/t/p/w600_and_h900_bestv2/og6g7Ei0HIjj3bdi7mmNdNK2W3v.jpg", s.image());
+        assertEquals("asdasdasd", s.bigImage());
+        assertEquals("https://www.youtube.com/watch?v=gbuEg2v9Arg", s.opening_video());
+        assertEquals(1, s.episodes().size());
+//        assertEquals(2, s.ratings().size());
     }
 
     @Test
@@ -58,88 +58,126 @@ public class SerieServiceTest {
     @Test
     void insertEsperaOObjetoInseridoEDeleta() { // PASSOU
         // ARRANGE
-        var serie = new Serie();
-        serie.setName("Série Teste");
-        serie.setPlot("Trama de uma série teste.");
-        serie.setBigImage("pasdkoapsd");
-        serie.setImage("asdopopkawe");
-        serie.setOpening_video("https://www.youtube.com/watch?v=H9K8-3PHZOU");
-        serie.setYear(2000);
+//        var serie = new Serie();
+//        serie.setName("Série Teste");
+//        serie.setPlot("Trama de uma série teste.");
+//        serie.setBigImage("pasdkoapsd");
+//        serie.setImage("asdopopkawe");
+//        serie.setOpening_video("https://www.youtube.com/watch?v=H9K8-3PHZOU");
+//        serie.setYear(2000);
+        var dto = new SerieDTOPost(
+                "Série Teste",
+                "Trama de uma série teste",
+                2000,
+                "asdopopkawe",
+                "pasdkoapsd",
+                "https://www.youtube.com/watch?v=H9K8-3PHZOU",
+                1L
+        );
 
         // ACT
-        var s = service.insert(serie);
+        var s = service.insert(dto);
 
         // ASSERT
         assertNotNull(s);
         Long id = s.getId();
         assertNotNull(id);
-        s = service.getSerieById(id).get();
-        assertNotNull(s);
-        assertEquals("Série Teste", s.getName());
-        assertEquals("Trama de uma série teste.", s.getPlot());
-        assertEquals("pasdkoapsd", s.getBigImage());
-        assertEquals("asdopopkawe", s.getImage());
-        assertEquals("https://www.youtube.com/watch?v=H9K8-3PHZOU", s.getOpening_video());
-        assertEquals(2000, s.getYear());
+        var fetched = service.getSerieById(id);
+        assertEquals(dto.name(), fetched.name());
+        assertEquals(dto.plot(), fetched.plot());
+        assertEquals(dto.year(), fetched.year());
+        assertEquals(dto.image(), fetched.image());
+        assertEquals(dto.bigImage(), fetched.bigImage());
+        assertEquals(dto.opening_video(), fetched.opening_video());
 
         service.delete(id);
-        if(service.getSerieById(id).isPresent()) {
+        if(service.getSerieById(id) == null) {
             fail("A série não foi excluída.");
         }
     }
 
     @Test
-    void updateEsperaOObjetoAlteradoERetornaAoValorOriginal() {//PASSOU
+    void updateEsperaOObjetoAlteradoERetornaAoValorOriginal() {
         // ARRANGE
-        var sOriginal = service.getSerieById(1L).get();
-        var serieMock = new Serie();
-        serieMock.setId(sOriginal.getId());
-        serieMock.setName("Série Teste Lalala");
-        serieMock.setPlot("Trama de uma série teste lalala.");
-        serieMock.setBigImage("pasdkoapsdLALALA");
-        serieMock.setImage("asdopopkaweLALALA");
-        serieMock.setOpening_video("https://www.youtube.com/watch?v=H9K8-3PHZOU");
-        serieMock.setYear(2000);
+        var sOriginal = service.getSerieById(1L);
 
-        //ACT
-        var serieAlterada = service.update(serieMock, serieMock.getId());
+        // Cria DTO com novos valores
+        var dtoAlteracao = new SerieDTOPut(
+                "Série Teste Lalala",
+                "Trama de uma série teste lalala.", // ponto final
+                2000,
+                "asdopopkaweLALALA",
+                "pasdkoapsdLALALA",
+                "https://www.youtube.com/watch?v=H9K8-3PHZOU",
+                sOriginal.categoryId()
+        );
 
-        // ASSERT
-        assertNotNull(serieAlterada);
-        assertEquals("Série Teste Lalala", serieAlterada.getName());
-        assertEquals("Trama de uma série teste lalala.", serieAlterada.getPlot());
-        assertEquals("pasdkoapsdLALALA", serieAlterada.getBigImage());
-        assertEquals("asdopopkaweLALALA", serieAlterada.getImage());
-        assertEquals("https://www.youtube.com/watch?v=H9K8-3PHZOU", serieAlterada.getOpening_video());
-        assertEquals(2000, serieAlterada.getYear());
+        // ACT - Atualiza a série
+        var serieAlterada = service.update(sOriginal.id(), dtoAlteracao);
 
-        // Volta ao valor original
-        var serieOriginal = service.update(sOriginal, sOriginal.getId());
-        assertNotNull(serieOriginal);
+        // ASSERT - Verifica que os campos foram alterados
+        assertEquals(dtoAlteracao.name(), serieAlterada.name());
+        assertEquals(dtoAlteracao.plot(), serieAlterada.plot());
+        assertEquals(dtoAlteracao.year(), serieAlterada.year());
+        assertEquals(dtoAlteracao.image(), serieAlterada.image());
+        assertEquals(dtoAlteracao.bigImage(), serieAlterada.bigImage());
+        assertEquals(dtoAlteracao.opening_video(), serieAlterada.opening_video());
+        assertEquals(dtoAlteracao.categoryId(), serieAlterada.categoryId());
+
+        // VOLTA AO VALOR ORIGINAL
+        var dtoOriginal = new SerieDTOPut(
+                sOriginal.name(),
+                sOriginal.plot(),
+                sOriginal.year(),
+                sOriginal.image(),
+                sOriginal.bigImage(),
+                sOriginal.opening_video(),
+                sOriginal.categoryId()
+        );
+
+        var serieRestaurada = service.update(sOriginal.id(), dtoOriginal);
+
+        // ASSERT - Verifica que voltou ao original
+        assertNotNull(serieRestaurada);
+        assertEquals(sOriginal.name(), serieRestaurada.name());
+        assertEquals(sOriginal.plot(), serieRestaurada.plot());
+        assertEquals(sOriginal.year(), serieRestaurada.year());
+        assertEquals(sOriginal.image(), serieRestaurada.image());
+        assertEquals(sOriginal.bigImage(), serieRestaurada.bigImage());
+        assertEquals(sOriginal.opening_video(), serieRestaurada.opening_video());
+        assertEquals(sOriginal.categoryId(), serieRestaurada.categoryId());
     }
 
-    @Test
-    void deleteEsperaAExclusaoDeUmObjetoInserido() { //PASSOU
-        var serie = new Serie();
-        serie.setName("ASDASD");
-        serie.setPlot("OIDFOIJFDSOI OSIDFJOSIDF");
-        serie.setBigImage("ODIODOSDIFOJD");
-        serie.setImage("AUIAAA");
-        serie.setOpening_video("QWWW");
-        serie.setYear(2024);
 
-        var s = service.insert(serie);
+    @Test
+    void deleteEsperaAExclusaoDeUmObjetoInserido() { //
+        var dto = new SerieDTOPost(
+                "Série Delete",
+                "Plot Delete",
+                2025,
+                "imagem",
+                "imagem grande",
+                "video",
+                1L
+        );
+
+//        var serie = new Serie();
+//        serie.setName("ASDASD");
+//        serie.setPlot("OIDFOIJFDSOI OSIDFJOSIDF");
+//        serie.setBigImage("ODIODOSDIFOJD");
+//        serie.setImage("AUIAAA");
+//        serie.setOpening_video("QWWW");
+//        serie.setYear(2024);
+
+        var s = service.insert(dto);
 
         assertNotNull(s);
 
         Long id = s.getId();
-        assertNotNull(id);
-        s = service.getSerieById(id).get();
-        assertNotNull(s);
 
-        service.delete(id);
-        if(service.getSerieById(id).isPresent()) {
-            fail("A série não foi excluída.");
-        }
+        boolean deleted = service.delete(id);
+        assertTrue(deleted);
+
+        assertTrue(service.getSerieById(id) == null);
     }
 }

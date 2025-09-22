@@ -8,7 +8,7 @@ public record HistoryDTOResponse(
         Long id,
         Long idUser,
         Long idEpisode,
-        LocalTime pausedAt
+        Long pausedAt
 ) {
         public HistoryDTOResponse (History history) {
                this(history.getId(), history.getUser().getId(), history.getEpisode().getId(), history.getPausedAt());

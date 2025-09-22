@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.users;
 
+import br.edu.ifsul.cstsi.tcc_server.api.series.FavoriteSerieDTO;
 import br.edu.ifsul.cstsi.tcc_server.api.series.SerieDTOResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -50,7 +51,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
  */
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 //@RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService service;
@@ -94,13 +95,13 @@ public class UserController {
     }
 
     @GetMapping(value = "/api/v1/users/{id}/favorites")
-    public ResponseEntity<List<SerieDTOResponse>> getFavoritesByUserId(@PathVariable Long id) {
+    public ResponseEntity<List<FavoriteSerieDTO>> getFavoritesByUserId(@PathVariable Long id) {
         var fav = service.getFavoriteSeriesById(id);
         System.out.println(fav);
         if (fav == null || fav.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(fav.stream().map(SerieDTOResponse::new).collect(Collectors.toList()));
+        return ResponseEntity.ok(fav.stream().map(FavoriteSerieDTO::new).collect(Collectors.toList()));
 
     }
 

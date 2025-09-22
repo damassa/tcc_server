@@ -1,7 +1,12 @@
 package br.edu.ifsul.cstsi.tcc_server.api.ratings;
 
 import br.edu.ifsul.cstsi.tcc_server.TccServerApplication;
+import br.edu.ifsul.cstsi.tcc_server.api.categories.Category;
+import br.edu.ifsul.cstsi.tcc_server.api.categories.CategoryService;
+import br.edu.ifsul.cstsi.tcc_server.api.series.Serie;
+import br.edu.ifsul.cstsi.tcc_server.api.series.SerieDTOPost;
 import br.edu.ifsul.cstsi.tcc_server.api.series.SerieService;
+import br.edu.ifsul.cstsi.tcc_server.api.users.User;
 import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +14,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest(classes = TccServerApplication.class)
 @ActiveProfiles("test")
 class RatingServiceTest {
+
     @Autowired
     private RatingService service;
     @Autowired
@@ -20,88 +27,84 @@ class RatingServiceTest {
     private SerieService serieService;
     @Autowired
     private UserRepository userRep;
+    @Autowired
+    private CategoryService categoryService;
+
+    // Cria categoria e retorna a entidade
+    private Category criarCategoriaTeste() {
+        Category categoria = new Category();
+        categoria.setName("Categoria Teste");
+        return categoryService.insert(categoria);
+    }
+
+    // Cria série vinculada a categoria
+    private Serie criarSerieTeste() {
+        Category categoria = criarCategoriaTeste();
+        SerieDTOPost serieDto = new SerieDTOPost(
+                "Série Teste",
+                "Trama de teste",
+                2020,
+                "imagem.jpg",
+                "bigImage.jpg",
+                "https://youtube.com/teste",
+                categoria.getId()
+        );
+        return serieService.insert(serieDto);
+    }
+
+    // Cria usuário de teste
+    private User criarUsuarioTeste() {
+        User user = new User();
+        user.setName("Usuário Teste");
+        user.setEmail("teste@example.com");
+        user.setPassword("123456");
+        return userRep.save(user);
+    }
 
     @Test
     void insert() {
-        var rating = new Rating();
-        rating.setId(3L);
-        rating.setComment("Comentário teste.");
-        rating.setStars(5);
-        rating.setSerie(serieService.getSerieById(1L).get());
-        rating.setUser(userRep.findById(2L).get());
+        Serie serie = criarSerieTeste();
+        User user = criarUsuarioTeste();
 
-        var r = service.insert(rating);
-        assertNotNull(r);
-        Long id = r.getId();
-        assertNotNull(id);
-        var rt = rep.findById(id);
-        assertNotNull(rt);
+        RatingDTOPost dto = new RatingDTOPost(user.getId(), serie.getId(), "Comentário teste", 5);
+        Rating saved = service.insert(dto);
 
-        assertEquals("Comentário teste.", rt.get().getComment());
-        assertEquals(5, rt.get().getStars());
+        assertNotNull(saved);
+        assertNotNull(saved.getId());
+        assertEquals("Comentário teste", saved.getComment());
+        assertEquals(5, saved.getStars());
 
-        service.delete(id);
-        if (rep.findById(id).isPresent()) {
-            fail("A avaliação foi excluída.");
-        }
-
+        // Cleanup
+        service.delete(saved.getId());
+        assertFalse(rep.findById(saved.getId()).isPresent());
     }
 
     @Test
     void update() {
-        //ARRANGE
-        var rating = new Rating();
-        rating.setId(3L);
-        rating.setComment("Comentário teste.");
-        rating.setStars(5);
-        rating.setSerie(serieService.getSerieById(1L).get());
-        rating.setUser(userRep.findById(2L).get());
+        Serie serie = criarSerieTeste();
+        User user = criarUsuarioTeste();
 
-        var r = service.insert(rating);
-        assertNotNull(r);
+        Rating saved = service.insert(new RatingDTOPost(user.getId(), serie.getId(), "Comentário inicial", 4));
+        RatingDTOPut updateDto = new RatingDTOPut(saved.getId(), user.getId(), serie.getId(), "Comentário atualizado", 3);
+        Rating updated = service.update(updateDto);
 
-        r.setComment("Comentário teste atualizado.");
-        r.setStars(4);
-        r.setSerie(serieService.getSerieById(1L).get());
-        r.setUser(userRep.findById(2L).get());
+        assertNotNull(updated);
+        assertEquals("Comentário atualizado", updated.getComment());
+        assertEquals(3, updated.getStars());
 
-        //ACT
-        var r2 = service.update(r);
-
-        //ASSERT
-        assertNotNull(r2);
-        assertEquals("Comentário teste atualizado.", r2.getComment());
-        assertEquals(4, r2.getStars());
-
-        service.delete(r2.getId());
-        if (rep.findById(r2.getId()).isPresent()) {
-            fail("A avaliação foi excluída.");
-        }
+        // Cleanup
+        service.delete(updated.getId());
+        assertFalse(rep.findById(updated.getId()).isPresent());
     }
 
     @Test
     void delete() {
-        var rating = new Rating();
-        rating.setId(4L);
-        rating.setComment("Comentário teste pra ser deletado.");
-        rating.setStars(2);
-        rating.setSerie(serieService.getSerieById(1L).get());
-        rating.setUser(userRep.findById(2L).get());
+        Serie serie = criarSerieTeste();
+        User user = criarUsuarioTeste();
 
-        var r = service.insert(rating);
-        assertNotNull(r);
-        Long id = r.getId();
-        assertNotNull(id);
-        var rt = rep.findById(id);
-        assertNotNull(rt);
+        Rating saved = service.insert(new RatingDTOPost(user.getId(), serie.getId(), "Comentário para deletar", 2));
+        service.delete(saved.getId());
 
-        assertEquals("Comentário teste pra ser deletado.", rt.get().getComment());
-        assertEquals(2, rt.get().getStars());
-
-        service.delete(id);
-
-        if (rep.findById(id).isPresent()) {
-            fail("A avaliação foi excluída.");
-        }
+        assertFalse(rep.findById(saved.getId()).isPresent());
     }
 }

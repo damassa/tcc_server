@@ -1,16 +1,35 @@
 package br.edu.ifsul.cstsi.tcc_server.api.series;
 
+import br.edu.ifsul.cstsi.tcc_server.api.episodes.Episode;
+import br.edu.ifsul.cstsi.tcc_server.api.episodes.EpisodeDTOGet;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 public record SerieDTOResponse(
         Long id,
         String name,
         String plot,
-        Integer year,
+        int year,
         String image,
         String bigImage,
         String opening_video,
-        String categoryName
+        Long categoryId,
+        List<EpisodeDTOGet> episodes
 ) {
     public SerieDTOResponse(Serie serie) {
-            this(serie.getId(), serie.getName(), serie.getPlot(), serie.getYear(), serie.getImage(), serie.getBigImage(), serie.getOpening_video(), serie.getCategory().getName());
+        this(
+                serie.getId(),
+                serie.getName(),
+                serie.getPlot(),
+                serie.getYear(),
+                serie.getImage(),
+                serie.getBigImage(),
+                serie.getOpening_video(),
+                serie.getCategory() != null ? serie.getCategory().getId() : null,
+                serie.getEpisodes() != null
+                        ? serie.getEpisodes().stream().map(EpisodeDTOGet::new).collect(Collectors.toList())
+                        : List.of()
+        );
     }
 }

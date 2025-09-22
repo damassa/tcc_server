@@ -6,56 +6,60 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/episodes")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 public class EpisodeController {
-    @Autowired
-    private EpisodeService service;
+    private final EpisodeService service;
 
-    @GetMapping("{id}")
-    public ResponseEntity<Episode> getEpisodeById(@PathVariable("id") Long id) {
-        var ep = service.getEpisodeById(id);
-        return ep != null ? ResponseEntity.ok().body(ep) : ResponseEntity.notFound().build();
+    public EpisodeController(EpisodeService service) {
+        this.service = service;
     }
 
-    @GetMapping("/serie/{id}")
-    public ResponseEntity<List<Episode>> getEpisodesBySerieId(@PathVariable("id") Long id) {
-        var episodes = service.getEpisodesBySerieId(id);
-        return episodes != null ? ResponseEntity.ok().body(episodes) : ResponseEntity.notFound().build();
+    @GetMapping("{id}")
+    public ResponseEntity<EpisodeDTOGet> getEpisodeById(@PathVariable Long id) {
+        var ep = service.getEpisodeById(id);
+        return ep != null ? ResponseEntity.ok(ep) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/serie/{serieId}")
+    public ResponseEntity<List<EpisodeDTOGet>> getEpisodesBySerieId(@PathVariable Long serieId) {
+        var episodes = service.getEpisodesBySerieId(serieId);
+        return ResponseEntity.ok(episodes);
     }
 
     @PostMapping
-    @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<String> insert (@RequestBody Episode episode) {
-        Episode e = service.insert(episode);
-        URI location = getUri(e.getId());
-        return ResponseEntity.created(location).build();
+    public ResponseEntity<EpisodeDTOGet> insert(@RequestBody EpisodeDTOPost dto, UriComponentsBuilder uriBuilder) {
+        EpisodeDTOGet saved = service.insert(dto); // agora usa o método correto do service
+        URI location = uriBuilder.path("/api/v1/episodes/{id}").buildAndExpand(saved.id()).toUri();
+        return ResponseEntity.created(location).body(saved);
     }
 
-    @PutMapping("{id}")
+
+
+    @PutMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<Episode> update(@PathVariable("id") Long id, @Valid @RequestBody Episode episode) {
-        episode.setId(id);
-        Episode e = service.update(episode, id);
-        return e != null ?
-                ResponseEntity.ok(e) :
-                ResponseEntity.notFound().build();
+    public ResponseEntity<EpisodeDTOGet> update(
+            @PathVariable Long id,
+            @Valid @RequestBody EpisodeDTOPut dto) {
+
+        var e = service.update(dto, id);
+        return e != null ? ResponseEntity.ok(e) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("{id}")
     @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
-        return service.delete(id) ?
-                ResponseEntity.ok().build() :
-                ResponseEntity.notFound().build();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return service.delete(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
     private URI getUri(Long id) {
         return ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
     }
 }
+

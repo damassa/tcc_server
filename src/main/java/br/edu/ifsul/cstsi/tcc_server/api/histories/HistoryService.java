@@ -1,5 +1,8 @@
 package br.edu.ifsul.cstsi.tcc_server.api.histories;
 
+import br.edu.ifsul.cstsi.tcc_server.api.episodes.EpisodeRepository;
+import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,8 +11,37 @@ import java.util.Optional;
 
 @Service
 public class HistoryService {
-    @Autowired
-    private HistoryRepository rep;
+    private final HistoryRepository rep;
+    private final UserRepository userRep;
+    private final EpisodeRepository episodeRep;
+
+    public HistoryService(HistoryRepository rep, UserRepository userRep, EpisodeRepository episodeRep) {
+        this.rep = rep;
+        this.userRep = userRep;
+        this.episodeRep = episodeRep;
+    }
+
+    public Optional<History> getHistoryByUserAndEpisode(Long userId, Long episodeId) {
+        return rep.findTopByUserIdAndEpisodeIdOrderByIdDesc(userId, episodeId);
+    }
+
+    @Transactional
+    public History saveOrUpdate(Long userId, Long episodeId, Long pausedAt) {
+        var user = userRep.findById(userId).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+        var episode = episodeRep.findById(episodeId).orElseThrow(() -> new IllegalArgumentException("Episódio não encontrado"));
+
+       History history = getHistoryByUserAndEpisode(userId, episodeId).orElseGet(() -> {
+           History h = new History();
+           h.setUser(user);
+           h.setEpisode(episode);
+           h.setPausedAt(pausedAt);
+           return h;
+       });
+
+       history.setPausedAt(pausedAt);
+       return rep.save(history);
+    }
+
 
     public History getHistoryById(Long id){
         return rep.findById(id).orElse(null);
@@ -18,29 +50,27 @@ public class HistoryService {
     public History insert (History history) {
         System.out.println("DEBUG DOS GURI: ");
         System.out.println(history);
-        Assert.notNull(history.getId(), "Não foi possível inserir o registro.");
+       if (history.getId() != null) {
+           throw new IllegalArgumentException("O id deve ser nulo pela inserção");
+       }
         return rep.save(history);
     }
 
     public History update(History history) {
-        Assert.notNull(history.getId(), "Não foi possível atualizar o registro.");
-        Optional<History> optional = rep.findById(history.getId());
-        if(optional.isPresent()) {
-            History db = optional.get();
+        if (history.getId() == null) {
+            throw new IllegalArgumentException("O id é obrigatório para atualizar");
+        }
+
+        return rep.findById(history.getId()).map(db -> {
             db.setPausedAt(history.getPausedAt());
             return rep.save(db);
-        } else {
-            return null;
-        }
+        }).orElse(null);
     }
 
     public boolean delete(Long id) {
-        Optional<History> optional = rep.findById(id);
-        if(optional.isPresent()) {
-            rep.delete(optional.get());
+        return rep.findById(id).map(h -> {
+            rep.delete(h);
             return true;
-        } else {
-            return false;
-        }
+        }).orElse(false);
     }
 }

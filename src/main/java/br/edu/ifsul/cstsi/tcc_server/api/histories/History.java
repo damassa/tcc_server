@@ -20,19 +20,27 @@ public class History { //Intuito da tabela é pegar o tempo do episódio assisti
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "episode_id")
     Episode episode;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     User user;
 
-    private LocalTime pausedAt;
+    private Long pausedAt;
 
     public static History create(HistoryDTOResponse h) {
         var modelMapper = new ModelMapper();
         return modelMapper.map(h, History.class);
+    }
+
+    public static History of(User user, Episode episode, Long pausedAt) {
+        var h = new History();
+        h.setUser(user);
+        h.setEpisode(episode);
+        h.setPausedAt(pausedAt);
+        return h;
     }
 
     @Override

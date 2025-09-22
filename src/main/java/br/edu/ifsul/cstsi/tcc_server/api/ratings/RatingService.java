@@ -1,5 +1,7 @@
 package br.edu.ifsul.cstsi.tcc_server.api.ratings;
 
+import br.edu.ifsul.cstsi.tcc_server.api.series.SerieRepository;
+import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -8,38 +10,54 @@ import java.util.Optional;
 
 @Service
 public class RatingService {
+
     @Autowired
     private RatingRepository rep;
 
-    public Rating getRatingById(Long id) {
-        return rep.findById(id).orElse(null);
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private SerieRepository serieRepository;
+
+    public Optional<RatingDTOResponse> getById(Long id) {
+        return rep.findById(id)
+                .map(RatingDTOResponse::new);
     }
 
-    public Rating insert (Rating rating) {
-        Assert.notNull(rating.getId(), "Não foi possível inserir o registro.");
+    public Rating insert(RatingDTOPost dto) {
+        Rating rating = new Rating();
+        rating.setUser(userRepository.findById(dto.idUser())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado")));
+        rating.setSerie(serieRepository.findById(dto.idSerie())
+                .orElseThrow(() -> new RuntimeException("Série não encontrada")));
+        rating.setStars(dto.stars());
+        rating.setComment(dto.comment());
+
         return rep.save(rating);
     }
 
-    public Rating update(Rating rating) {
-        Assert.notNull(rating.getId(), "Não foi possível atualizar o registro.");
-        Optional<Rating> optional = rep.findById(rating.getId());
-        if(optional.isPresent()) {
-            Rating db = optional.get();
-            db.setComment(rating.getComment());
-            db.setStars(rating.getStars());
-            return rep.save(db);
-        } else {
-            return null;
-        }
+    public Rating update(RatingDTOPut dto) {
+        Assert.notNull(dto.id(), "ID não pode ser nulo para atualizar.");
+
+        Rating rating = rep.findById(dto.id())
+                .orElseThrow(() -> new RuntimeException("Avaliação não encontrada"));
+
+        rating.setUser(userRepository.findById(dto.idUser())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado")));
+        rating.setSerie(serieRepository.findById(dto.idSerie())
+                .orElseThrow(() -> new RuntimeException("Série não encontrada")));
+        rating.setStars(dto.stars());
+        rating.setComment(dto.comment());
+
+        return rep.save(rating);
     }
 
     public boolean delete(Long id) {
-        Optional<Rating> optional = rep.findById(id);
-        if(optional.isPresent()) {
-            rep.delete(optional.get());
+        if (rep.existsById(id)) {
+            rep.deleteById(id);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 }

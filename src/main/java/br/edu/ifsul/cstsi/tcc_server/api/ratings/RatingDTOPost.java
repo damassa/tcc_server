@@ -1,20 +1,19 @@
 package br.edu.ifsul.cstsi.tcc_server.api.ratings;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record RatingDTOPost(
-        @NotBlank
-        Long id,
-        @NotBlank
+        @NotNull
         Long idUser,
-        @NotBlank
+        @NotNull
         Long idSerie,
         @NotBlank
         String comment,
-        @NotBlank
+        @NotNull
         Integer stars
 ) {
     public RatingDTOPost (Rating rating) {
-        this(rating.getId(), rating.getUser().getId(), rating.getSerie().getId(), rating.getComment(), rating.getStars());
+        this(rating.getUser().getId(), rating.getSerie().getId(), rating.getComment(), rating.getStars());
     }
 }
