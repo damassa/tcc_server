@@ -15,6 +15,7 @@ public record SerieDTOResponse(
         String bigImage,
         String opening_video,
         Long categoryId,
+        String categoryName,
         List<EpisodeDTOGet> episodes
 ) {
     public SerieDTOResponse(Serie serie) {
@@ -27,6 +28,7 @@ public record SerieDTOResponse(
                 serie.getBigImage(),
                 serie.getOpening_video(),
                 serie.getCategory() != null ? serie.getCategory().getId() : null,
+                serie.getCategory() != null ? serie.getCategory().getName() : null,
                 serie.getEpisodes() != null
                         ? serie.getEpisodes().stream().map(EpisodeDTOGet::new).collect(Collectors.toList())
                         : List.of()

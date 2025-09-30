@@ -3,8 +3,6 @@ package br.edu.ifsul.cstsi.tcc_server.api.histories;
 import br.edu.ifsul.cstsi.tcc_server.api.episodes.EpisodeRepository;
 import br.edu.ifsul.cstsi.tcc_server.api.users.UserRepository;
 import jakarta.transaction.Transactional;
-import org.modelmapper.internal.util.Assert;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,19 +25,25 @@ public class HistoryService {
 
     @Transactional
     public History saveOrUpdate(Long userId, Long episodeId, Long pausedAt) {
-        var user = userRep.findById(userId).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
-        var episode = episodeRep.findById(episodeId).orElseThrow(() -> new IllegalArgumentException("Episódio não encontrado"));
+        var user = userRep.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+        var episode = episodeRep.findById(episodeId)
+                .orElseThrow(() -> new IllegalArgumentException("Episódio não encontrado"));
 
-       History history = getHistoryByUserAndEpisode(userId, episodeId).orElseGet(() -> {
-           History h = new History();
-           h.setUser(user);
-           h.setEpisode(episode);
-           h.setPausedAt(pausedAt);
-           return h;
-       });
+        // 🔹 Se o usuário assistiu até o fim (>= duração), limpamos o histórico
+        if (pausedAt != null && pausedAt >= episode.getDuration()) {
+            pausedAt = 0L;
+        }
 
-       history.setPausedAt(pausedAt);
-       return rep.save(history);
+        History history = getHistoryByUserAndEpisode(userId, episodeId).orElseGet(() -> {
+            History h = new History();
+            h.setUser(user);
+            h.setEpisode(episode);
+            return h;
+        });
+
+        history.setPausedAt(pausedAt);
+        return rep.save(history);
     }
 
 
@@ -72,5 +76,10 @@ public class HistoryService {
             rep.delete(h);
             return true;
         }).orElse(false);
+    }
+
+    @Transactional
+    public void deleteByUserAndEpisode(Long userId, Long episodeId) {
+        rep.deleteByUserIdAndEpisodeId(userId, episodeId);
     }
 }

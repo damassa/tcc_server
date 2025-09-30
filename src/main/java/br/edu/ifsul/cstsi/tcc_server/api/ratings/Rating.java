@@ -26,8 +26,10 @@ public class Rating {
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
+    @Column(columnDefinition = "TEXT")
     private String comment;
-    private int stars;
+    @Column(nullable = true)
+    private Integer stars;
 
     public static Rating create(RatingDTOResponse r) {
         var modelMapper = new ModelMapper();
@@ -38,8 +40,8 @@ public class Rating {
     public String toString() {
         return "Rating{" +
                 "id=" + id +
-                ", serie=" + serie +
-                ", user=" + user +
+                ", serie=" + (serie != null ? serie.getId() : null) +
+                ", user=" + (user != null ? user.getId() : null) +
                 ", comment='" + comment + '\'' +
                 ", stars=" + stars +
                 '}';

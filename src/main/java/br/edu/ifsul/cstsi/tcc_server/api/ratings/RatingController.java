@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,6 +26,12 @@ public class RatingController {
         return service.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/serie/{serieId}")
+    public ResponseEntity<List<RatingDTOResponse>> findBySerie(@PathVariable("serieId") Long serieId) {
+        List<RatingDTOResponse> ratings = service.getBySerie(serieId);
+        return ratings.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(ratings);
     }
 
     // Se quiser permitir que qualquer usuário avalie, remova o @Secured
@@ -66,6 +73,15 @@ public class RatingController {
         });
         return errors;
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Map<String, String> handleIllegalArgument(IllegalArgumentException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return error;
+    }
+
 
     private URI getUri(Long id) {
         return ServletUriComponentsBuilder.fromCurrentRequest()

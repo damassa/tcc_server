@@ -27,7 +27,7 @@ public class HistoryController {
     ) {
         return service.getHistoryByUserAndEpisode(userId, episodeId)
                 .map(h -> ResponseEntity.ok(new HistoryDTOResponse(h)))
-                .orElse(ResponseEntity.ok().build()); // retorna 200 com corpo vazio se não houver histórico
+                .orElse(ResponseEntity.noContent().build()); // retorna 200 com corpo vazio se não houver histórico
     }
 
     /** Busca histórico por id */
@@ -45,11 +45,11 @@ public class HistoryController {
         return ResponseEntity.ok(new HistoryDTOResponse(history));
     }
 
-    /** Deleta histórico (somente admin) */
-    @DeleteMapping("/{id}")
-    @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return service.delete(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    @DeleteMapping
+    @Secured({"ROLE_USER"})
+    public ResponseEntity<Void> delete(@RequestParam Long userId, @RequestParam Long episodeId) {
+        service.deleteByUserAndEpisode(userId, episodeId);
+        return ResponseEntity.noContent().build();
     }
 
     /** Gera URI para localização de recurso (opcional) */

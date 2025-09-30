@@ -10,7 +10,7 @@ import org.modelmapper.ModelMapper;
 import java.time.LocalTime;
 
 @Entity(name = "history")
-@Table(name = "histories")
+@Table(name = "histories", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "episode_id"})})
 @Getter
 @Setter
 @NoArgsConstructor

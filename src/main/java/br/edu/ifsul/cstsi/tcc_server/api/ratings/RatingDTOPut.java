@@ -1,6 +1,5 @@
 package br.edu.ifsul.cstsi.tcc_server.api.ratings;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record RatingDTOPut(
@@ -10,9 +9,7 @@ public record RatingDTOPut(
         Long idUser,
         @NotNull
         Long idSerie,
-        @NotBlank
         String comment,
-        @NotNull
         Integer stars
 ) {
     public RatingDTOPut(Rating rating) {

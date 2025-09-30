@@ -12,9 +12,6 @@ import java.util.Optional;
 public class CategoryService {
 
     @Autowired
-    private SerieRepository serieRepository;
-
-    @Autowired
     private CategoryRepository rep;
 
     // Retorna todas as categorias (entidades)

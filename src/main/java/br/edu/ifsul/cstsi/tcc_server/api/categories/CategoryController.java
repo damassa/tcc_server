@@ -22,19 +22,19 @@ public class CategoryController {
 
     // Retorna todos os DTOs
     @GetMapping
-    public ResponseEntity<List<CategoryDTOPost>> selectAll() {
-        List<CategoryDTOPost> categories = service.getCategories()
+    public ResponseEntity<List<CategoryDTOGet>> selectAll() {
+        List<CategoryDTOGet> categories = service.getCategories()
                 .stream()
-                .map(CategoryDTOPost::new)
+                .map(CategoryDTOGet::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(categories);
     }
 
     // Retorna DTO por ID
     @GetMapping("{id}")
-    public ResponseEntity<CategoryDTOPost> selectById(@PathVariable("id") Long id) {
+    public ResponseEntity<CategoryDTOGet> selectById(@PathVariable("id") Long id) {
         Optional<Category> c = service.getCategoryById(id);
-        return c.map(cat -> ResponseEntity.ok(new CategoryDTOPost(cat)))
+        return c.map(cat -> ResponseEntity.ok(new CategoryDTOGet(cat)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

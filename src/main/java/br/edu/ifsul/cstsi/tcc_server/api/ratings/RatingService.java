@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,7 +26,15 @@ public class RatingService {
                 .map(RatingDTOResponse::new);
     }
 
+    public List<RatingDTOResponse> getBySerie(Long serieId) {
+        return rep.findBySerieId(serieId).stream().map(RatingDTOResponse::new).toList();
+    }
+
     public Rating insert(RatingDTOPost dto) {
+        if ((dto.comment() == null || dto.comment().isBlank()) && dto.stars() == null) {
+            throw new IllegalArgumentException("Avaliação precisa ter comentário ou estrelas.");
+        }
+
         Rating rating = new Rating();
         rating.setUser(userRepository.findById(dto.idUser())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado")));
@@ -38,7 +47,9 @@ public class RatingService {
     }
 
     public Rating update(RatingDTOPut dto) {
-        Assert.notNull(dto.id(), "ID não pode ser nulo para atualizar.");
+        if ((dto.comment() == null || dto.comment().isBlank()) && dto.stars() == null) {
+            throw new IllegalArgumentException("Avaliação precisa ter comentário ou estrelas.");
+        }
 
         Rating rating = rep.findById(dto.id())
                 .orElseThrow(() -> new RuntimeException("Avaliação não encontrada"));
