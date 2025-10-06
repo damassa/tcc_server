@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/ratings")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 public class RatingController {
 
     @Autowired
@@ -34,16 +35,27 @@ public class RatingController {
         return ratings.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(ratings);
     }
 
+    @GetMapping("/serie/{serieId}/average")
+    public ResponseEntity<Double> getAverageBySerie(@PathVariable("serieId") Long serieId) {
+        return ResponseEntity.ok(service.getAverageStarsBySerieId(serieId));
+    }
+
+    @GetMapping("/serie/{serieId}/stats")
+    public ResponseEntity<RatingStatsDTO> getRatingStats(@PathVariable("serieId") Long serieId) {
+        RatingStatsDTO stats = service.getRatingStatsBySerieId(serieId);
+        return ResponseEntity.ok(stats);
+    }
+
     // Se quiser permitir que qualquer usuário avalie, remova o @Secured
     @PostMapping
+    @Secured({"ROLE_USER"})
     public ResponseEntity<RatingDTOResponse> insert(@Valid @RequestBody RatingDTOPost dto) {
-        Rating saved = service.insert(dto);
+        Rating saved = service.insertOrUpdate(dto);
         URI location = getUri(saved.getId());
         return ResponseEntity.created(location).body(new RatingDTOResponse(saved));
     }
 
     @PutMapping("{id}")
-    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<RatingDTOResponse> update(@PathVariable("id") Long id,
                                                     @Valid @RequestBody RatingDTOPut dto) {
         if (!id.equals(dto.id())) {
@@ -54,7 +66,6 @@ public class RatingController {
     }
 
     @DeleteMapping("{id}")
-    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         boolean deleted = service.delete(id);
         return deleted

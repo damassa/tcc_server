@@ -9,10 +9,10 @@ public record RatingDTOPut(
         Long idUser,
         @NotNull
         Long idSerie,
-        String comment,
+        @NotNull
         Integer stars
 ) {
     public RatingDTOPut(Rating rating) {
-        this(rating.getId(), rating.getUser().getId(), rating.getSerie().getId(), rating.getComment(), rating.getStars());
+        this(rating.getId(), rating.getUser().getId(), rating.getSerie().getId(), rating.getStars());
     }
 }

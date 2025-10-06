@@ -2,19 +2,23 @@ package br.edu.ifsul.cstsi.tcc_server.api.series;
 
 import br.edu.ifsul.cstsi.tcc_server.api.categories.Category;
 import br.edu.ifsul.cstsi.tcc_server.api.categories.CategoryRepository;
+import br.edu.ifsul.cstsi.tcc_server.api.ratings.RatingRepository;
+import br.edu.ifsul.cstsi.tcc_server.api.ratings.RatingStatsDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
 @Service
 public class SerieService { // TODO: Não tem que botar DTO aqui?
     private final SerieRepository serieRepository;
+    @Autowired
+    private RatingRepository ratingRepository;
 
     public SerieService (SerieRepository serieRepository) {
         this.serieRepository = serieRepository;
@@ -32,13 +36,36 @@ public class SerieService { // TODO: Não tem que botar DTO aqui?
     }
 
     @Transactional
-    public Page<Serie> getSeries(Pageable pagination) {
-        return serieRepository.findAll(pagination);
+    public Page<SerieDTOResponse> getSeries(Pageable pagination) {
+        return serieRepository.findAll(pagination).map(serie -> {
+           if(serie.getCategory() != null) serie.getCategory().getName();
+           if(serie.getEpisodes() != null) serie.getEpisodes().size();
+           return new SerieDTOResponse(serie);
+        });
     }
 
-//    public Optional<Serie> getSerieById(Long id) {
-//        return serieRepository.findById(id);
-//    }
+    @Transactional
+    public List<SerieDTOResponse> getTopRatedSeries(int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        List<Serie> series = serieRepository.findTopRatedSeries(pageable);
+
+        return series.stream()
+                .peek(s -> {
+                    if (s.getCategory() != null) s.getCategory().getName();
+                    if (s.getEpisodes() != null) s.getEpisodes().size();
+                    if (s.getRatings() != null) s.getRatings().size();
+                })
+                .map(serie -> {
+                    // Usa o existente no RatingRepository
+                    RatingStatsDTO stats = ratingRepository.getRatingStatsBySerie(serie.getId());
+                    return new SerieDTOResponse(
+                            serie,
+                            stats.getAverage(),
+                            stats.getTotalVotes()
+                    );
+                })
+                .toList();
+    }
 
     @Transactional
     public SerieDTOResponse getSerieById(Long id) {

@@ -23,7 +23,6 @@ public class RatingControllerTest extends BaseAPIIntegrationTest {
         var ratingDTOPost = new RatingDTOPost(
                 2L, // idUser
                 1L, // idSerie
-                "Comentário teste insert",
                 5
         );
 
@@ -34,7 +33,6 @@ public class RatingControllerTest extends BaseAPIIntegrationTest {
         var newRating = getRating(location).getBody();
         assertNotNull(newRating);
         assertEquals(5, newRating.stars());
-        assertEquals("Comentário teste insert", newRating.comment());
 
         delete(location, null);
         assertEquals(HttpStatus.NOT_FOUND, getRating(location).getStatusCode());
@@ -43,7 +41,7 @@ public class RatingControllerTest extends BaseAPIIntegrationTest {
     @Test
     void update() {
         // Criar rating inicial
-        var ratingDTOPost = new RatingDTOPost(2L, 1L, "Comentário teste update", 5);
+        var ratingDTOPost = new RatingDTOPost(2L, 1L, 5);
         var response = post("/api/v1/ratings", ratingDTOPost, RatingDTOResponse.class);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
@@ -56,13 +54,11 @@ public class RatingControllerTest extends BaseAPIIntegrationTest {
                 rDTO.id(), // usar o id criado
                 rDTO.idUser(),
                 rDTO.idSerie(),
-                "Comentário teste update modificado",
                 4
         );
 
         var responsePUT = put(location, ratingDTOPut, RatingDTOResponse.class);
         assertEquals(HttpStatus.OK, responsePUT.getStatusCode());
-        assertEquals("Comentário teste update modificado", responsePUT.getBody().comment());
         assertEquals(4, responsePUT.getBody().stars());
 
         delete(location, null);
@@ -71,14 +67,13 @@ public class RatingControllerTest extends BaseAPIIntegrationTest {
 
     @Test
     void delete() {
-        var ratingDTOPost = new RatingDTOPost(2L, 1L, "Comentário teste delete", 3);
+        var ratingDTOPost = new RatingDTOPost(2L, 1L, 3);
         var response = post("/api/v1/ratings", ratingDTOPost, RatingDTOResponse.class);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
         var location = response.getHeaders().getLocation().toString();
         var newRating = getRating(location).getBody();
         assertNotNull(newRating);
-        assertEquals("Comentário teste delete", newRating.comment());
         assertEquals(3, newRating.stars());
 
         var responseDelete = delete(location, null);

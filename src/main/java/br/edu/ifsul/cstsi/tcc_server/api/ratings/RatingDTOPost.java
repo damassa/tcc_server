@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.ratings;
 
+
 import jakarta.validation.constraints.NotNull;
 
 public record RatingDTOPost(
@@ -7,10 +8,10 @@ public record RatingDTOPost(
         Long idUser,
         @NotNull
         Long idSerie,
-        String comment,
+        @NotNull(message = "Número de estrelas é obrigatório")
         Integer stars
 ) {
     public RatingDTOPost (Rating rating) {
-        this(rating.getUser().getId(), rating.getSerie().getId(), rating.getComment(), rating.getStars());
+        this(rating.getUser().getId(), rating.getSerie().getId(), rating.getStars());
     }
 }

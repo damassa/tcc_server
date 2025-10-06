@@ -15,7 +15,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -33,14 +32,7 @@ public class SerieController {
     public SerieController(SerieService serieService) {
         this.serieService = serieService;
     }
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private CategoryRepository catRep;
-    @Autowired
-    private CategoryService categoryService;
-    @Autowired
-    private CategoryRepository categoryRepository;
+
 
     @GetMapping
     public ResponseEntity<List<SerieDTOResponse>> selectAllSeries() {
@@ -52,11 +44,16 @@ public class SerieController {
 
 
     @GetMapping("/pageable")
+    @Secured({"ROLE_USER"})
     public ResponseEntity<Page<SerieDTOResponse>> selectAll(@PageableDefault(sort = "name") Pageable pagination) {
-        return ResponseEntity.ok(
-                serieService.getSeries(pagination)
-                        .map(SerieDTOResponse::new)
-        );
+        return ResponseEntity.ok(serieService.getSeries(pagination));
+    }
+
+    @GetMapping("/top-rated")
+    public ResponseEntity<List<SerieDTOResponse>> getTopRatedSeries(@RequestParam(defaultValue = "10") int limit) {
+        var series = serieService.getTopRatedSeries(limit);
+        if (series.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(series);
     }
 
 

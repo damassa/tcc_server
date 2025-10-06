@@ -8,7 +8,7 @@ import lombok.*;
 import org.modelmapper.ModelMapper;
 
 
-@Entity(name = "rating")
+@Entity(name = "Rating")
 @Table(name = "ratings")
 @Getter
 @Setter
@@ -26,8 +26,6 @@ public class Rating {
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
-    @Column(columnDefinition = "TEXT")
-    private String comment;
     @Column(nullable = true)
     private Integer stars;
 
@@ -42,7 +40,6 @@ public class Rating {
                 "id=" + id +
                 ", serie=" + (serie != null ? serie.getId() : null) +
                 ", user=" + (user != null ? user.getId() : null) +
-                ", comment='" + comment + '\'' +
                 ", stars=" + stars +
                 '}';
     }

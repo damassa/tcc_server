@@ -66,12 +66,11 @@ class RatingServiceTest {
         Serie serie = criarSerieTeste();
         User user = criarUsuarioTeste();
 
-        RatingDTOPost dto = new RatingDTOPost(user.getId(), serie.getId(), "Comentário teste", 5);
+        RatingDTOPost dto = new RatingDTOPost(user.getId(), serie.getId(), 5);
         Rating saved = service.insert(dto);
 
         assertNotNull(saved);
         assertNotNull(saved.getId());
-        assertEquals("Comentário teste", saved.getComment());
         assertEquals(5, saved.getStars());
 
         // Cleanup
@@ -84,12 +83,11 @@ class RatingServiceTest {
         Serie serie = criarSerieTeste();
         User user = criarUsuarioTeste();
 
-        Rating saved = service.insert(new RatingDTOPost(user.getId(), serie.getId(), "Comentário inicial", 4));
-        RatingDTOPut updateDto = new RatingDTOPut(saved.getId(), user.getId(), serie.getId(), "Comentário atualizado", 3);
+        Rating saved = service.insert(new RatingDTOPost(user.getId(), serie.getId(), 4));
+        RatingDTOPut updateDto = new RatingDTOPut(saved.getId(), user.getId(), serie.getId(), 3);
         Rating updated = service.update(updateDto);
 
         assertNotNull(updated);
-        assertEquals("Comentário atualizado", updated.getComment());
         assertEquals(3, updated.getStars());
 
         // Cleanup
@@ -102,7 +100,7 @@ class RatingServiceTest {
         Serie serie = criarSerieTeste();
         User user = criarUsuarioTeste();
 
-        Rating saved = service.insert(new RatingDTOPost(user.getId(), serie.getId(), "Comentário para deletar", 2));
+        Rating saved = service.insert(new RatingDTOPost(user.getId(), serie.getId(), 2));
         service.delete(saved.getId());
 
         assertFalse(rep.findById(saved.getId()).isPresent());
