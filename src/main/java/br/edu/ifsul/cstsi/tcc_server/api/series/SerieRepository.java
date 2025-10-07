@@ -1,5 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.series;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -45,12 +46,15 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
     List<Serie> findAll();
 
     @Query("""
-            SELECT s FROM Serie s
-            LEFT JOIN s.ratings r
-            GROUP BY s
-            ORDER BY AVG(COALESCE(r.stars, 0)) DESC, COUNT(r) DESC
-            """)
+    SELECT s
+    FROM Serie s
+    LEFT JOIN s.ratings r
+    GROUP BY s
+    HAVING COALESCE(AVG(r.stars), 0) >= 10
+    ORDER BY AVG(r.stars) DESC
+""")
     @EntityGraph(attributePaths = {"category", "episodes"})
-    List<Serie> findTopRatedSeries(Pageable pageable);
+    Page<Serie> findTopRatedSeries(Pageable pageable);
+
 
 }

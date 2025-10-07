@@ -44,28 +44,42 @@ public class SerieService { // TODO: Não tem que botar DTO aqui?
         });
     }
 
-    @Transactional
-    public List<SerieDTOResponse> getTopRatedSeries(int limit) {
-        Pageable pageable = PageRequest.of(0, limit);
-        List<Serie> series = serieRepository.findTopRatedSeries(pageable);
+//    @Transactional
+//    public List<SerieDTOResponse> getTopRatedSeries(int limit) {
+//        Pageable pageable = PageRequest.of(0, limit);
+//        Page<Serie> series = serieRepository.findTopRatedSeries(pageable);
+//
+//        return series.stream()
+//                .peek(s -> {
+//                    if (s.getCategory() != null) s.getCategory().getName();
+//                    if (s.getEpisodes() != null) s.getEpisodes().size();
+//                    if (s.getRatings() != null) s.getRatings().size();
+//                })
+//                .map(serie -> {
+//                    // Usa o existente no RatingRepository
+//                    RatingStatsDTO stats = ratingRepository.getRatingStatsBySerie(serie.getId());
+//                    return new SerieDTOResponse(
+//                            serie,
+//                            stats.getAverage(),
+//                            stats.getTotalVotes()
+//                    );
+//                })
+//                .toList();
+//    }
 
-        return series.stream()
-                .peek(s -> {
-                    if (s.getCategory() != null) s.getCategory().getName();
-                    if (s.getEpisodes() != null) s.getEpisodes().size();
-                    if (s.getRatings() != null) s.getRatings().size();
-                })
+    public Page<SerieDTOResponse> getTopRatedSeriesPageable(Pageable pageable) {
+        return serieRepository.findTopRatedSeries(pageable)
                 .map(serie -> {
-                    // Usa o existente no RatingRepository
                     RatingStatsDTO stats = ratingRepository.getRatingStatsBySerie(serie.getId());
                     return new SerieDTOResponse(
                             serie,
-                            stats.getAverage(),
-                            stats.getTotalVotes()
+                            stats != null ? stats.getAverage() : null,
+                            stats != null ? stats.getTotalVotes() : null
                     );
-                })
-                .toList();
+                });
     }
+
+
 
     @Transactional
     public SerieDTOResponse getSerieById(Long id) {

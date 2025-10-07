@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,11 +50,18 @@ public class SerieController {
         return ResponseEntity.ok(serieService.getSeries(pagination));
     }
 
-    @GetMapping("/top-rated")
-    public ResponseEntity<List<SerieDTOResponse>> getTopRatedSeries(@RequestParam(defaultValue = "10") int limit) {
-        var series = serieService.getTopRatedSeries(limit);
-        if (series.isEmpty()) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(series);
+//    @GetMapping("/top-rated")
+//    public ResponseEntity<List<SerieDTOResponse>> getTopRatedSeries(@RequestParam(defaultValue = "10") int limit) {
+//        var series = serieService.getTopRatedSeries(limit);
+//        if (series.isEmpty()) return ResponseEntity.noContent().build();
+//        return ResponseEntity.ok(series);
+//    }
+
+    @GetMapping("/top-rated/pageable")
+    public ResponseEntity<Page<SerieDTOResponse>> getTopRatedSeriesPageable(@PageableDefault(size = 4, sort = "avgRating", direction = Sort.Direction.DESC) Pageable pagination) {
+        var page = serieService.getTopRatedSeriesPageable(pagination);
+        if (page.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(page);
     }
 
 
