@@ -1,11 +1,6 @@
 package br.edu.ifsul.cstsi.tcc_server.api.series;
 
-import br.edu.ifsul.cstsi.tcc_server.api.categories.Category;
-import br.edu.ifsul.cstsi.tcc_server.api.categories.CategoryRepository;
-import br.edu.ifsul.cstsi.tcc_server.api.categories.CategoryService;
-import br.edu.ifsul.cstsi.tcc_server.api.users.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -45,33 +40,17 @@ public class SerieController {
 
 
     @GetMapping("/pageable")
-    @Secured({"ROLE_USER"})
     public ResponseEntity<Page<SerieDTOResponse>> selectAll(@PageableDefault(sort = "name") Pageable pagination) {
         return ResponseEntity.ok(serieService.getSeries(pagination));
     }
 
-//    @GetMapping("/top-rated")
-//    public ResponseEntity<List<SerieDTOResponse>> getTopRatedSeries(@RequestParam(defaultValue = "10") int limit) {
-//        var series = serieService.getTopRatedSeries(limit);
-//        if (series.isEmpty()) return ResponseEntity.noContent().build();
-//        return ResponseEntity.ok(series);
-//    }
-
     @GetMapping("/top-rated/pageable")
-    public ResponseEntity<Page<SerieDTOResponse>> getTopRatedSeriesPageable(@PageableDefault(size = 4, sort = "avgRating", direction = Sort.Direction.DESC) Pageable pagination) {
-        var page = serieService.getTopRatedSeriesPageable(pagination);
-        if (page.isEmpty()) return ResponseEntity.noContent().build();
+    public ResponseEntity<Page<SerieTopRatedDTO>> getTopRatedSeriesPageable(Pageable pageable) {
+        Page<SerieTopRatedDTO> page = serieService.getTopRatedSeriesPageable(pageable);
         return ResponseEntity.ok(page);
     }
 
 
-//    @GetMapping("{id}")
-//    public ResponseEntity<SerieDTOResponse> selectById(@PathVariable Long id) {
-//        return serieService.getSerieById(id)
-//                .map(SerieDTOResponse::new)
-//                .map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<SerieDTOResponse> selectById(@PathVariable Long id) {

@@ -7,7 +7,6 @@ import br.edu.ifsul.cstsi.tcc_server.api.ratings.RatingStatsDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -44,42 +43,18 @@ public class SerieService { // TODO: Não tem que botar DTO aqui?
         });
     }
 
-//    @Transactional
-//    public List<SerieDTOResponse> getTopRatedSeries(int limit) {
-//        Pageable pageable = PageRequest.of(0, limit);
-//        Page<Serie> series = serieRepository.findTopRatedSeries(pageable);
-//
-//        return series.stream()
-//                .peek(s -> {
-//                    if (s.getCategory() != null) s.getCategory().getName();
-//                    if (s.getEpisodes() != null) s.getEpisodes().size();
-//                    if (s.getRatings() != null) s.getRatings().size();
-//                })
-//                .map(serie -> {
-//                    // Usa o existente no RatingRepository
-//                    RatingStatsDTO stats = ratingRepository.getRatingStatsBySerie(serie.getId());
-//                    return new SerieDTOResponse(
-//                            serie,
-//                            stats.getAverage(),
-//                            stats.getTotalVotes()
-//                    );
-//                })
-//                .toList();
-//    }
+@Transactional
+    public Page<SerieTopRatedDTO> getTopRatedSeriesPageable(Pageable pageable) {
+        Page<Serie> page = serieRepository.findTopRatedSeriesPageable(pageable);
 
-    public Page<SerieDTOResponse> getTopRatedSeriesPageable(Pageable pageable) {
-        return serieRepository.findTopRatedSeries(pageable)
-                .map(serie -> {
-                    RatingStatsDTO stats = ratingRepository.getRatingStatsBySerie(serie.getId());
-                    return new SerieDTOResponse(
-                            serie,
-                            stats != null ? stats.getAverage() : null,
-                            stats != null ? stats.getTotalVotes() : null
-                    );
-                });
+        // Mapeia cada série para incluir estatísticas de avaliação
+        return page.map(serie -> {
+            RatingStatsDTO stats = ratingRepository.getRatingStatsBySerie(serie.getId());
+            Double avg = (stats != null && stats.getAverage() != null) ? stats.getAverage() : 0.0;
+            Long votes = (stats != null && stats.getTotalVotes() != null) ? stats.getTotalVotes() : 0L;
+            return new SerieTopRatedDTO(serie, avg, votes);
+        });
     }
-
-
 
     @Transactional
     public SerieDTOResponse getSerieById(Long id) {

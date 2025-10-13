@@ -43,7 +43,7 @@
                     req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll(); //exceto, a rota de documentação (para doc em html no navegador; e para ferramentas automatizadas de geração de código)
                     req.requestMatchers(HttpMethod.POST, "/api/v1/login", "/api/v1/users/register").permitAll(); //exceto, a rota de login
                     req.requestMatchers(HttpMethod.POST, "/api/v1/users/forgot-password", "/api/v1/users/reset-password").permitAll();
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/series/pageable","/api/v1/categories/","/confirm-email").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/api/v1/series/pageable/**", "/api/v1/series/top-rated/pageable/**", "/api/v1/categories/**" ,"/confirm-email").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/api/v1/ratings/**").permitAll();
                     req.requestMatchers(HttpMethod.GET, "/api/v1/ratings/**").permitAll();
                     req.requestMatchers(HttpMethod.PUT, "/api/v1/ratings/**").permitAll();

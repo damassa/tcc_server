@@ -45,16 +45,29 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
     @EntityGraph(attributePaths = {"category", "episodes"})
     List<Serie> findAll();
 
-    @Query("""
-    SELECT s
-    FROM Serie s
-    LEFT JOIN s.ratings r
-    GROUP BY s
-    HAVING COALESCE(AVG(r.stars), 0) >= 10
-    ORDER BY AVG(r.stars) DESC
-""")
-    @EntityGraph(attributePaths = {"category", "episodes"})
-    Page<Serie> findTopRatedSeries(Pageable pageable);
+    @Query(
+            value = """
+
+                    SELECT s.*
+                FROM series s
+                LEFT JOIN ratings r ON r.serie_id = s.id
+                GROUP BY s.id
+                HAVING COALESCE(AVG(r.stars), 0) >= 4.0
+                ORDER BY COALESCE(AVG(r.stars), 0) DESC
+        """,
+            countQuery = """
+        SELECT COUNT(*) 
+        FROM (
+            SELECT s.id
+            FROM series s
+            LEFT JOIN ratings r ON r.serie_id = s.id
+            GROUP BY s.id
+            HAVING COALESCE(AVG(r.stars), 0) >= 4.0
+        ) AS sub
+        """,
+            nativeQuery = true
+    )
+    Page<Serie> findTopRatedSeriesPageable(Pageable pageable);
 
 
 }
