@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/ratings")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "https://worldoftokusatsu.netlify.app", "https://admin-toku.netlify.app/"})
 public class RatingController {
 
     @Autowired

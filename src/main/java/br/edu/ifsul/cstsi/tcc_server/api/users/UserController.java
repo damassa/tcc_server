@@ -51,7 +51,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
  */
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "https://worldoftokusatsu.netlify.app", "https://admin-toku.netlify.app/"})
 //@RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService service;

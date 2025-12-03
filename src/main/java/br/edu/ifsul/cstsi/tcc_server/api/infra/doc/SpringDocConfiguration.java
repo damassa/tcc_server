@@ -32,6 +32,6 @@ public class SpringDocConfiguration {
                     .email("suporte.tokusatsu@gmail.com"))
                 .license(new License()
                     .name("Apache 2.0")
-                    .url("http://localhost:8080/api/licenca")));
+                    .url("http://https://tccserver-f1d0375900a5.herokuapp.com/api/licenca")));
     }
 }

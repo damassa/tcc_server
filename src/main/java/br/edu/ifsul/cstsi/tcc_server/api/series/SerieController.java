@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/series")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "https://worldoftokusatsu.netlify.app", "https://admin-toku.netlify.app/"})
 public class SerieController {
     private final SerieService serieService;
 
