@@ -9,7 +9,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/histories")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "https://worldoftokusatsu.netlify.app", "https://admin-toku.netlify.app/"})
+@CrossOrigin(origins = {"https://worldoftokusatsu.netlify.app/", "https://admin-toku.netlify.app/"})
 public class HistoryController {
 
     private final HistoryService service;
