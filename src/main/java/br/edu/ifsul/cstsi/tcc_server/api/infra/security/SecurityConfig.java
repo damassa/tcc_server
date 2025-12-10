@@ -48,6 +48,7 @@
                     req.requestMatchers(HttpMethod.GET, "/api/v1/ratings/**").permitAll();
                     req.requestMatchers(HttpMethod.PUT, "/api/v1/ratings/**").permitAll();
                     req.requestMatchers(HttpMethod.DELETE, "/api/v1/ratings/**").permitAll();
+                    req.requestMatchers("/api/v1/histories/**").permitAll();
                     req.anyRequest().authenticated(); //demais rotas devem ser autenticadas
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class); //manda o filter do projeto vir antes do filter do Spring
