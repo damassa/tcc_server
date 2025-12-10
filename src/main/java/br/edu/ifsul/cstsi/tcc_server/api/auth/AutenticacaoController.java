@@ -20,7 +20,7 @@ import java.util.Map;
 
 @RestController //indica que essa classe deve ser adicionada ao Contexto do aplicativo como um Bean da camada de controle API REST
 @RequestMapping("api/v1/login") //Endpoint padrão da classe
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "https://worldoftokusatsu.netlify.app", "https://admin-toku.netlify.app"})
 public class AutenticacaoController {
 
     @Autowired //indica ao Spring Boot que ele deve injetar essa dependência para a classe funcionar
