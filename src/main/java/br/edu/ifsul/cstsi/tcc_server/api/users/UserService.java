@@ -54,7 +54,8 @@ public class UserService {
                 "Olá, " + user.getName()
                 + "\n\nAgora que você se cadastrou em World of Tokusatsu, com o e-mail " + user.getEmail()
                 + " é necessário confirmar, clicando no link a seguir:"
-                + "\n\nhttp://localhost:8080/confirm-email?token=" + token.getToken()
+//                + "\n\nhttp://localhost:8080/confirm-email?token=" + token.getToken()
+                +"\n\nhttps://tccserver-f1d0375900a5.herokuapp.com/confirm-email?token=" + token.getToken()
         );
         return savedUser;
     }
@@ -117,7 +118,8 @@ public class UserService {
                 "Redefinição de Senha - World of Tokusatsu",
                 "Olá, " + user.getName() +
                         "\n\nVocê solicitou a redefinição de sua senha. Para prosseguir, clique no link abaixo:" +
-                        "\n\nhttp://localhost:3000/reset-password?token=" + user.getResetPasswordToken() +
+//                        "\n\nhttp://localhost:3000/reset-password?token=" + user.getResetPasswordToken() +
+                        "\n\nhttps://tccserver-f1d0375900a5.herokuapp.com/reset-password?token=" + user.getResetPasswordToken() +
                         "\n\nEste link é válido por 24 horas." +
                         "\n\nSe você não solicitou esta redefinição, ignore este e-mail."
         );
