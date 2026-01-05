@@ -70,6 +70,7 @@ public class UserController {
         user.setName(usuarioDTO.name());
         user.setEmail(usuarioDTO.email());
         user.setPassword(encoder.encode(usuarioDTO.senha()));
+        user.setConfirmed(true);
         user.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
         try {
             var u = service.insert(user);

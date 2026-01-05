@@ -44,6 +44,7 @@ public class UserService {
         Assert.isNull(user.getId(), "Não foi possível inserir o registro");
 
         validations.forEach(v -> v.validate(user));
+//        user.setConfirmed(true);
         var savedUser = rep.save(user);
         var token = new TokenConfirmEmail(savedUser);
         tokenConfirmEmailRepository.save(token);
