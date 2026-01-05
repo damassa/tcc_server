@@ -24,7 +24,7 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
     @EntityGraph(attributePaths = {"category","episodes"})
     List<Serie> getSeriesByCategoryId(Long id);
 
-    @Query(value = "insert into zhw4mucnmprfiq95.favorites (serie_id, user_id) values(?1, ?2)", nativeQuery = true)
+    @Query(value = "insert into favorites (serie_id, user_id) values(?1, ?2)", nativeQuery = true)
     void insertFavorite(Long id_serie, Long id_user);
 
     @Query(value = "SELECT DISTINCT s.*\n" +
