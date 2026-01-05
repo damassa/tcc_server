@@ -33,10 +33,10 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
             "WHERE f.user_id = ?1\n", nativeQuery = true)
     List<Serie> getFavoritesByUserID(Long id);
 
-    @Query(value = "delete from tcc_server.favorites where serie_id = ?1 and user_id = ?2", nativeQuery = true)
+    @Query(value = "delete from favorites where serie_id = ?1 and user_id = ?2", nativeQuery = true)
     void removeFromFavorites(Long id_serie, Long id_user);
 
-    @Query(value = "select count(*) from tcc_server.favorites where serie_id = ?1 and user_id = ?2", nativeQuery = true)
+    @Query(value = "select count(*) from favorites where serie_id = ?1 and user_id = ?2", nativeQuery = true)
     Integer countSeriesByIds(Long id_serie, Long id_user);
 
     @EntityGraph(attributePaths = {"category","episodes"})
