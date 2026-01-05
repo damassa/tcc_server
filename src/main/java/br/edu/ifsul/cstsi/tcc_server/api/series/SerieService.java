@@ -81,6 +81,7 @@ public class SerieService { // TODO: Não tem que botar DTO aqui?
 
     @Transactional
     public void toggleFavorite(Long id_serie, Long id_user) {
+        System.out.println(id_serie + " " + id_user);
         serieRepository.insertFavorite(id_serie, id_user);
     }
 
