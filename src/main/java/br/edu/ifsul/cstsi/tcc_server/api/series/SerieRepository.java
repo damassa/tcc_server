@@ -1,9 +1,11 @@
 package br.edu.ifsul.cstsi.tcc_server.api.series;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -24,6 +26,8 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
     @EntityGraph(attributePaths = {"category","episodes"})
     List<Serie> getSeriesByCategoryId(Long id);
 
+    @Modifying // Indicates that this query modifies data
+    @Transactional // Recommended for modifying operations
     @Query(value = "insert into favorites (serie_id, user_id) values(:serie_id, :user_id)", nativeQuery = true)
     void insertFavorite(Long id_serie, Long id_user);
 
@@ -33,6 +37,8 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
             "WHERE f.user_id = ?1\n", nativeQuery = true)
     List<Serie> getFavoritesByUserID(Long id);
 
+    @Modifying // Indicates that this query modifies data
+    @Transactional // Recommended for modifying operations
     @Query(value = "delete from favorites where serie_id = :serie_id and user_id = :user_id", nativeQuery = true)
     void removeFromFavorites(Long id_serie, Long id_user);
 
