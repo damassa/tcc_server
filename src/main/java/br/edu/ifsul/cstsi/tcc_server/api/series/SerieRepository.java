@@ -28,7 +28,7 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
 
     @Modifying // Indicates that this query modifies data
     @Transactional // Recommended for modifying operations
-    @Query(value = "insert into favorites (serie_id, user_id) values(:serie_id, :user_id)", nativeQuery = true)
+    @Query(value = "insert into favorites (serie_id, user_id) values(?1, ?2)", nativeQuery = true)
     void insertFavorite(Long id_serie, Long id_user);
 
     @Query(value = "SELECT DISTINCT s.*\n" +
@@ -39,7 +39,7 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
 
     @Modifying // Indicates that this query modifies data
     @Transactional // Recommended for modifying operations
-    @Query(value = "delete from favorites where serie_id = :serie_id and user_id = :user_id", nativeQuery = true)
+    @Query(value = "delete from favorites where serie_id = ?1 and user_id = ?2", nativeQuery = true)
     void removeFromFavorites(Long id_serie, Long id_user);
 
     @Query(value = "select count(*) from favorites where serie_id = ?1 and user_id = ?2", nativeQuery = true)
